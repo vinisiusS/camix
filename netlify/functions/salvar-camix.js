@@ -17,18 +17,15 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
 
     const payload = {
-      id: 1,
       nome: body.nome ?? null,
       numero_c: body.numero_c ?? null,
       numero_fpc: body.numero_fpc ?? null,
       numero_val: body.numero_val ?? null,
       numero_vvc: body.numero_vvc ?? null,
       numero_t: body.numero_t ?? null,
-      updated_at: new Date().toISOString(),
     };
 
-    // UPSERT: insere ou atualiza se já existir
-    const url = `${process.env.SUPABASE_URL}/rest/v1/user_camix?on_conflict=id`;
+    const url = `${process.env.SUPABASE_URL}/rest/v1/user_camix`;
 
     const r = await fetch(url, {
       method: "POST",
@@ -36,8 +33,7 @@ exports.handler = async (event) => {
         "Content-Type": "application/json",
         apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
         Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        // isso faz o "upsert" (merge)
-        Prefer: "resolution=merge-duplicates,return=representation",
+        Prefer: "return=representation",
       },
       body: JSON.stringify(payload),
     });
@@ -48,7 +44,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: text || JSON.stringify({ ok: true }),
+      body: text, // vai voltar a linha criada (com id)
     };
   } catch (e) {
     return {
