@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Termos e Condições (DEMO)</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:#f3f4f6;
+      color:#111827;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .container{
+      width:100%;
+      max-width:820px;
+      margin:0 auto;
+      padding:16px;
+    }
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin:18px 0 12px;
+      flex-wrap:wrap;
+    }
+    h1{font-size:18px;margin:0}
+    .demo{
+      font-size:12px;
+      color:#92400e;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:16px;
+      line-height:1.6;
+    }
+    .muted{color:#6b7280;font-size:13px;margin:6px 0 0}
+    h2{
+      font-size:14px;
+      margin:18px 0 8px;
+    }
+    ul{margin:8px 0 0 18px}
+    li{margin:6px 0}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      justify-content:flex-end;
+    }
+    a.btn, button.btn{
+      text-decoration:none;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      color:#111827;
+      cursor:pointer;
+      font-size:14px;
+    }
+    a.primary, button.primary{
+      background:#2563eb;
+      border-color:#2563eb;
+      color:#fff;
+    }
+    footer{
+      margin-top:auto;
+      border-top:1px solid #e5e7eb;
+      background:#fff;
+    }
+    .foot{
+      padding:14px 0;
+      color:#6b7280;
+      font-size:12px;
+      text-align:center;
+    }
+    .note{
+      margin-top:10px;
+      font-size:12px;
+      color:#065f46;
+      background:#ecfdf5;
+      border:1px solid #a7f3d0;
+      padding:10px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="top">
+      <div>
+        <h1>Termos e Condições</h1>
+      </div>
+    </div>
+
+    <section class="card">
+
+      <h2>Prazos de Separação e Entrega</h2>
+      <p>
+        Separação e entrega: 10 dias úteis para a separação após a confirmação do pagamento e 15 a 35 dias úteis para a entrega, podendo variar conforme a localização do cliente e as condições de envio.
+      </p>
+      <p>Os prazos informados têm como base a média de entrega dos pedidos anteriores e podem variar conforme fatores externos.</p>
+
+      <h2>Acompanhamento do Pedido</h2>
+      <p>Após o envio, o código de rastreamento será disponibilizado para que o cliente acompanhe a entrega do pedido.</p>
+      <ul>
+        <li>É importante que o cliente:</li>
+        <li>acompanhe o rastreamento regularmente;</li>
+        <li>esteja disponível para o recebimento do pedido no endereço informado.</li>
+      </ul>
+
+      <p>Caso o pedido seja devolvido ou não entregue por motivos atribuídos ao cliente, como destinatário ausente, endereço incorreto ou não retirada dentro do prazo informado pelos Correios, o reenvio poderá ser realizado mediante o pagamento dos custos de nova remessa e reposição do pedido, os quais poderão corresponder a <span>50% do valor pago inicialmente</span>, considerando frete e custos operacionais.</p>
+
+      <h2>Taxas e Importação</h2>
+      <p>Caso o rastreamento apresente o status “Aguardando pagamento”, referente a taxas, nossa equipe realizará o pagamento integral da taxa, sem custo adicional para o cliente, para que o pedido continue em trânsito.</p>
+
+      <h2>Problemas com a Entrega</h2>
+      <p>Nos casos de extravio do pedido ou retenção alfandegária, o reenvio do produto será realizado por nossa conta, sem custo adicional para o cliente, conforme previsto nos Termos e Condições do site.</p>
+
+    </section>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      © <span id="year"></span> FanKit (DEMO). Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

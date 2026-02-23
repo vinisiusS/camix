@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pagamento (Demo)</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:#f3f4f6;
+    color:#111827;
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+    }
+    .wrap{
+      width:100%;
+      max-width:820px;
+      padding:16px;
+      margin: auto;
+        }
+    .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    h1{font-size:18px;margin:0}
+    .demo{font-size:12px;color:#92400e;background:#fff7ed;border:1px solid #fed7aa;padding:6px 10px;border-radius:999px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px}
+    .methods{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    .btnm{flex:1 1 160px;display:flex;gap:8px;align-items:center;justify-content:center;padding:10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+    .btnm.active{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+    .panel{display:none;margin-top:10px;border-top:1px solid #e5e7eb;padding-top:12px}
+    .panel.show{display:block}
+    label{display:block;font-size:12px;color:#6b7280;margin:10px 0 6px}
+    input,select{width:100%;padding:10px 11px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-size:16px;outline:none}
+    input:focus,select:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+    .row{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width:640px){.row.c2{grid-template-columns:1fr 1fr}.row.c3{grid-template-columns:1.4fr .8fr .8fr}}
+    .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;border:1px solid #e5e7eb;border-radius:10px;padding:10px;word-break:break-all}
+    .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+    .primary{background:#2563eb;border-color:#2563eb;color:#fff}
+    .msg{margin-top:10px;font-size:13px;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;padding:10px;border-radius:10px;display:none}
+    .msg.show{display:block}
+    /* Footer */
+    .footer{
+      width:100%;
+      background:#fff;
+      border-top:1px solid #e5e7eb;
+      margin-top:24px;
+    }
+
+    /* se você não tiver .container definido na página */
+    .container{
+      width:100%;
+      max-width:820px;   /* mesmo padrão do seu .wrap */
+      margin:0 auto;
+      padding:0 16px;
+    }
+
+    .footer__inner{
+      padding:20px 0;
+    }
+
+    .brand--footer{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+    }
+
+    .brand__mark{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#2563eb; /* azul do seu botão */
+      display:inline-block;
+    }
+
+    .muted{
+      color:#6b7280;
+      font-size:13px;
+      margin:8px 0 0;
+    }
+
+    .footer__bottom{
+      border-top:1px solid #e5e7eb;
+      padding:14px 0;
+      font-size:12px;
+    }
+    .hint{
+      margin-top:6px;
+      font-size:12px;
+      color:#6b7280;
+    }
+
+    .locked{
+      opacity:.55;
+      pointer-events:none; /* impede clique */
+    }
+
+    .hidden{
+      display:none !important;
+    }
+    .actions--inline{
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .chk{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      color:#374151;
+      user-select:none;
+    }
+
+    .chk input{
+      width:16px;
+      height:16px;
+      accent-color:#2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Pagamento</h1>
+        <div style="color:#6b7280;font-size:13px;margin-top:4px">INFORME SEUS DADOS</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+      <div>
+        <label>Nome</label>
+        <input id="nome" type="text" placeholder="Nome completo" autocomplete="name" />
+        <div class="hint" id="nomeHint">Informe seu nome completo</div>
+      </div>
+      <div>
+        <label>Celular com DDD</label>
+        <input id="celular" type="tel" placeholder="(00) 00000-0000" autocomplete="tel" />
+        <div class="hint" id="celularHint">Informe um número de celular válido.</div>
+      </div>
+      <div>
+        <label>Endereço</label>
+        <input id="endereco" type="text" placeholder="Digite o endereço completo" autocomplete="street-address" />
+        <div class="hint" id="enderecoHint">Informe um endereço completo</div>
+      </div>
+      <div>
+        <label>Bairro</label>
+        <input id="bairro" type="text" placeholder="Bairro" autocomplete="neighborhood" />
+        <div class="hint" id="bairroHint">Informe um bairro</div>
+      </div>
+      <div>
+        <label>Numero</label>
+        <input id="numero" type="text" placeholder="Número" autocomplete="address-line1" />
+        <div class="hint" id="numeroHint">Informe o número do endereço</div>
+      </div>
+      <div>
+        <label>Cidade</label>
+        <input id="cidade" type="text" placeholder="Cidade" autocomplete="address-level2" />
+        <div class="hint" id="cidadeHint">Informe a cidade</div>
+      </div>
+      <div>
+        <label>Estado</label>
+        <input id="estado" type="text" placeholder="Estado" autocomplete="address-level1" />
+        <div class="hint" id="estadoHint">Informe o estado</div>
+      </div>
+      <div>
+        <label>E-mail</label>
+        <input id="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" />
+        <div class="hint" id="emailHint">Informe um e-mail válido para liberar as formas de pagamento.</div><br>
+      </div>
+    </div>
+      <div style="font-weight:600;font-size:14px">Escolha a forma de pagamento</div>
+
+      <div class="methods">
+        <button class="btnm" id="bPix" type="button">Pix</button>
+        <button class="btnm active" id="bCard" type="button">Cartão</button>
+      </div>
+
+      <div class="panel" id="pPix">
+        <label>Pix copia e cola (DEMO)</label>
+        <div class="code" id="pixCode">
+00020126580014BR.GOV.BCB.PIX0136demo-chave-pix-faculdade-12345678905204000053039865802BR5920LOJA DEMO FACULDADE6009SAO PAULO62070503***6304ABCD
+        </div>
+        <div class="actions" style="justify-content:flex-start">
+          <button type="button" id="copy">Copiar</button>
+        </div>
+      </div>
+
+      <div class="panel show" id="pCard">
+        <div class="row c2">
+          <div>
+            <label>Nome no cartão (demo)</label>
+            <input id="nome" placeholder="Ex.: Maria Silva" />
+          </div>
+          <div>
+            <label>CPF (demo)</label>
+            <input id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label>Número do cartão (demo)</label>
+            <input id="num" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="row c3" style="margin-top:10px">
+          <div>
+            <label>Validade</label>
+            <input id="val" placeholder="MM/AA" maxlength="5" inputmode="numeric" />
+          </div>
+          <div>
+            <label>CVV</label>
+            <input id="cvv" placeholder="000" maxlength="4" inputmode="numeric" />
+          </div>
+          <div>
+            <label>Parcelas</label>
+            <select id="par"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions actions--inline">
+        <label class="chk">
+          <input type="checkbox" id="agree" />
+          <span>Concordo com os <a href="termos.html" target="_blank">termos</a></span>
+        </label>
+
+        <button type="button" id="final" class="primary">Finalizar (DEMO)</button>
+      </div>
+
+      <div class="msg" id="msg">Pedido confirmado (SIMULAÇÃO). Nenhum pagamento foi realizado.</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <div class="brand brand--footer">
+          <span class="brand__mark"></span>
+          <span class="brand__name">FanKit</span>
+        </div>
+        <p class="muted">Todos os revendedores em um unico lugar.</p>
+        <p class="muted" style="margin-top:8px; font-weight:800;">
+            CNPJ: 54.118.488/0001-85 • 
+        </p>
+      </div>
+    </div>
+    <div class="container footer__bottom muted">
+      © <span id="year"></span> FanKit. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script>
+    
+    // troca painel
+    const bCard = document.getElementById('bCard');
+    const bPix = document.getElementById('bPix');
+    const pCard = document.getElementById('pCard');
+    const pPix = document.getElementById('pPix');
+
+    function setMode(m){
+      const card = m === 'card';
+      bPix.classList.toggle('active', !card);
+      bCard.classList.toggle('active', card);
+      pPix.classList.toggle('show', !card);
+      pCard.classList.toggle('show', card);
+    }
+    bCard.onclick = () => setMode('card');
+    bPix.onclick = () => setMode('pix');
+
+    // parcelas 1x a 12x
+    const subtotalSalvo = Number(localStorage.getItem("subtotal") ?? 0);
+    const exibicaoBR = subtotalSalvo.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    const total = exibicaoBR;
+    const par = document.getElementById('par');
+    const brl = v => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+    for(let i=1;i<=12;i++){
+      const o = document.createElement('option');
+      o.value = i;
+      o.textContent = `${i}x de ${brl(total/i)}`;
+      par.appendChild(o);
+    }
+
+    // copiar pix
+    document.getElementById('copy').onclick = async () => {
+      const txt = document.getElementById('pixCode').textContent.trim();
+      try{ await navigator.clipboard.writeText(txt); }
+      catch{}
+    };
+
+    // máscaras simples
+    const cpf = document.getElementById('cpf');
+    cpf.addEventListener('input', () => {
+      let v = cpf.value.replace(/\D/g,'').slice(0,11);
+      v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+      cpf.value = v;
+    });
+
+    const num = document.getElementById('num');
+    num.addEventListener('input', () => {
+      let v = num.value.replace(/\D/g,'').slice(0,16);
+      num.value = v.replace(/(\d{4})(?=\d)/g,'$1 ');
+    });
+
+    const val = document.getElementById('val');
+    val.addEventListener('input', () => {
+      let v = val.value.replace(/\D/g,'').slice(0,4);
+      if(v.length>=3) v = v.slice(0,2)+'/'+v.slice(2);
+      val.value = v;
+    });
+
+    const cvv = document.getElementById('cvv');
+    cvv.addEventListener('input', () => cvv.value = cvv.value.replace(/\D/g,'').slice(0,4));
+
+    // finalizar
+    document.getElementById('final').onclick = () => {
+      document.getElementById('msg').classList.add('show');
+    };
+  </script>
+</body>
+</html>

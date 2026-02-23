@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FanKit — Loja de Camisas de Time</title>
+  <meta name="description" content="Loja de camisas de time: Home, Away, Third, Retrô e Treino." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <button class="cart-fab" id="btnOpenCart" aria-label="Abrir carrinho (flutuante)">
+    🛒 <span class="cart-fab__badge" id="cartCount">0</span>
+    </button>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span><strong>FAÇA A VENDA E NÓS ENTREGAMOS PARA VOCÊ</strong></span>
+      <span class="muted">Revenda sem necessidade de ter estoque</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <button class="icon-btn header__menu" id="btnMenu" aria-label="Abrir menu">
+        <span class="icon-lines"></span>
+      </button>
+
+      <a class="brand" href="#inicio" aria-label="Ir para o início">
+        <span class="brand__mark"></span>
+        <span class="brand__name">FanKit</span>
+      </a>
+
+      <nav class="nav" id="nav">
+        <a href="#colecoes">Coleções</a>
+        <a href="#produtos">Loja</a>
+        <a href="#tamanhos">Guia de tamanhos</a>
+      </nav>
+
+      <div class="header__actions">
+        <div class="search" role="search" aria-label="Buscar camisas">
+          <input id="searchInput" type="search" placeholder="Buscar: home, away, retrô..." autocomplete="off" />
+          <button class="icon-btn" id="btnClearSearch" aria-label="Limpar busca" title="Limpar">✕</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile nav drawer -->
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+      <div class="mobile-nav__panel">
+        <div class="mobile-nav__top">
+          <strong>Menu</strong>
+          <button class="icon-btn" id="btnCloseMenu" aria-label="Fechar menu">✕</button>
+        </div>
+        <a href="#colecoes" class="mobile-link">Coleções</a>
+        <a href="#produtos" class="mobile-link">Loja</a>
+        <a href="#tamanhos" class="mobile-link">Guia de tamanhos</a>
+        <a href="#newsletter" class="mobile-link">Ofertas</a>
+      </div>
+      <div class="backdrop" data-close="menu"></div>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- Hero “camisa de time” -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <p class="tag">SEJA UM REVENDEDOR • RUMO AO HEXA</p>
+            <h1>O Hexa vem aí e o seu lucro também! Multiplique sua renda.</h1>
+            <p class="lead">
+            Aproveite a melhor época do ano para fazer renda extra! Compre no atacado camisas impecáveis (Home, Edição Especial, Retrô), selecione as cores em poucos cliques e prepare-se para esgotar o seu estoque.
+            </p>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#produtos">Quero Começar a Lucrar</a>
+            <button class="btn btn--ghost" id="btnScrollCategories">Ver coleções</button>
+          </div>
+
+          <div class="hero__badges">
+            <div class="badge">
+              <span class="badge__dot"></span>
+              <div>
+                <strong>Patch/escudo</strong>
+                <div class="muted">Simulação no layout</div>
+              </div>
+            </div>
+            <div class="badge">
+              <span class="badge__dot"></span>
+              <div>
+                <strong>Troca fácil</strong>
+                <div class="muted">7 dias após receber</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual -->
+        <div class="hero__visual" aria-hidden="true">
+        <div class="hero-card hero-card--big">
+            <img class="hero-card__img" src="assets/brasil-2020.jpg" alt="">
+            <div class="hero-card__shine"></div>
+            <div class="hero-card__content">
+            <div class="hero-card__label">DESTAQUE</div>
+            <div class="hero-card__title">Brasil 2020</div>
+            <div class="hero-card__sub">Home • a partir de R$ 149,90</div>
+            </div>
+        </div>
+
+        <div class="hero-card hero-card--small">
+            <img class="hero-card__img" src="assets/brasil-retro-98.jpg" alt="">
+            <div class="hero-card__content">
+            <div class="hero-card__label">RETRO</div>
+            <div class="hero-card__title">Edição 1998</div>
+            <div class="hero-card__sub">R$ 189,90</div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coleções -->
+    <section class="section" id="colecoes">
+      <div class="container">
+        <div class="section__head">
+          <h2>Coleções</h2>
+          <p class="muted">Clique para filtrar a loja por categoria.</p>
+        </div>
+
+        <!-- chips (JS preenche e controla o filtro de categoria) -->
+        <div class="chips" id="categoryChips"></div>
+      </div>
+    </section>
+
+    <!-- Loja + filtros + grid de produtos -->
+    <section class="section" id="produtos">
+      <div class="container">
+        <div class="grid-layout">
+          <!-- Filtros (desktop) -->
+          <aside class="filters" id="filters">
+            <div class="filters__head">
+              <h3>Filtrar</h3>
+              <button class="link" id="btnReset">Limpar</button>
+            </div>
+
+            <div class="filter-group">
+              <label class="label">Categoria</label>
+              <select id="filterCategory" class="select"></select>
+            </div>
+
+            <div class="filter-group">
+              <label class="label">Tamanho</label>
+              <div class="options" id="sizeOptions"></div>
+            </div>
+
+            <div class="filter-group">
+              <label class="label">Cor</label>
+              <div class="swatches" id="colorOptions"></div>
+            </div>
+
+            <div class="filter-group">
+              <label class="label">Ordenar</label>
+              <select id="sortBy" class="select">
+                <option value="featured">Destaques</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="name-asc">A–Z</option>
+              </select>
+            </div>
+
+            <button class="btn btn--primary w100" id="btnApplyMobile">Aplicar</button>
+
+            <div style="margin-top:14px; border-top:1px solid var(--line); padding-top:14px;">
+              <strong style="display:block; margin-bottom:8px;">Selo da loja</strong>
+              <div class="muted" style="font-weight:800; line-height:1.45;">
+                • Envio rápido<br/>
+                • Troca fácil<br/>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Vitrine -->
+          <section class="products">
+            <div class="products__head">
+              <div>
+                <h2>Vitrine</h2>
+                <p class="muted"><span id="resultsCount">0</span> itens encontrados</p>
+              </div>
+              <div class="products__actions">
+                <button class="btn btn--ghost hide-desktop" id="btnOpenFilters">Filtros</button>
+              </div>
+            </div>
+
+            <!-- grid de produtos (JS preenche) -->
+            <div class="cards" id="productGrid" aria-live="polite"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- Guia de tamanhos -->
+    <section class="section section--soft" id="tamanhos">
+      <div class="container">
+        <div class="section__head">
+          <h2>Guia de tamanhos</h2>
+          <p class="muted">Medidas aproximadas.</p>
+        </div>
+
+        <div class="card" style="padding:12px;">
+          <div style="overflow:auto;">
+            <table style="width:100%; border-collapse:collapse; min-width:640px;">
+              <thead>
+                <tr>
+                  <th style="text-align:left; padding:10px; border-bottom:1px solid var(--line);">Tamanho</th>
+                  <th style="text-align:left; padding:10px; border-bottom:1px solid var(--line);">Tórax (cm)</th>
+                  <th style="text-align:left; padding:10px; border-bottom:1px solid var(--line);">Comprimento (cm)</th>
+                  <th style="text-align:left; padding:10px; border-bottom:1px solid var(--line);">Indicação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:10px; border-bottom:1px solid var(--line); font-weight:900;">P</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">88–96</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">66–69</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);" class="muted">Mais ajustada</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px; border-bottom:1px solid var(--line); font-weight:900;">M</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">96–104</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">69–72</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);" class="muted">Padrão</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px; border-bottom:1px solid var(--line); font-weight:900;">G</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">104–112</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">72–75</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);" class="muted">Conforto</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px; border-bottom:1px solid var(--line); font-weight:900;">GG</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">112–120</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);">75–78</td>
+                  <td style="padding:10px; border-bottom:1px solid var(--line);" class="muted">Mais solta</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="tiny muted" style="margin:10px 0 0;">
+            Dica: se curte mais folgada, pega 1 tamanho acima.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="section" id="newsletter">
+      <div class="container newsletter">
+        <div>
+          <h2>Receba ofertas e lançamentos</h2>
+          <p class="muted">Cupom e alertas de reposição.</p>
+        </div>
+        <form class="newsletter__form" id="newsletterForm">
+          <input type="email" required placeholder="seuemail@exemplo.com" />
+          <button class="btn btn--primary" type="submit">Quero receber</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <div class="brand brand--footer">
+          <span class="brand__mark"></span>
+          <span class="brand__name">FanKit</span>
+        </div>
+        <p class="muted">Todos os revendedores em um unico lugar.</p>
+        <p class="muted" style="margin-top:8px; font-weight:800;">
+            CNPJ: 54.118.488/0001-85 • 
+        </p>
+      </div>
+
+      <div class="footer__cols">
+        <div>
+          <strong>Loja</strong>
+          <a href="#colecoes">Coleções</a>
+          <a href="#produtos">Vitrine</a>
+          <a href="#tamanhos">Guia de tamanhos</a>
+        </div>
+        <div>
+          <strong>Atendimento</strong>
+          <a href="#">Trocas</a>
+          <a href="#">Entrega</a>
+          <a href="#">Contato</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer__bottom muted">
+      © <span id="year"></span> FanKit. Todos os direitos reservados.
+    </div>
+    
+  </footer>
+
+  <!-- Product Quick View Modal -->
+  <div class="modal" id="productModal" aria-hidden="true">
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
+      <button class="icon-btn modal__close" id="btnCloseModal" aria-label="Fechar">✕</button>
+      <div class="modal__content" id="modalContent"></div>
+    </div>
+    <div class="backdrop" data-close="modal"></div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Carrinho">
+      <div class="drawer__head">
+        <strong>Carrinho</strong>
+        <button class="icon-btn" id="btnCloseCart" aria-label="Fechar carrinho">✕</button>
+      </div>
+
+      <div class="drawer__body" id="cartItems"></div>
+
+      <div class="drawer__footer">
+        <div class="row">
+          <span class="muted">Subtotal</span>
+          <strong id="cartSubtotal">R$ 0,00</strong>
+        </div>
+        <div id="resaleBox" class="resale-box"></div>
+        <a href="config/index.html"><button class="btn btn--primary w100" id="btnCheckout">Finalizar compra</button></a>
+        <p class="tiny muted">Checkout</p>
+      </div>
+    </div>
+    <div class="backdrop" data-close="cart"></div>
+  </div>
+
+  <!-- Mobile Filters Drawer -->
+  <div class="drawer" id="filtersDrawer" aria-hidden="true">
+    <div class="drawer__panel drawer__panel--wide" role="dialog" aria-modal="true" aria-label="Filtros">
+      <div class="drawer__head">
+        <strong>Filtros</strong>
+        <button class="icon-btn" id="btnCloseFilters" aria-label="Fechar filtros">✕</button>
+      </div>
+      <div class="drawer__body" id="filtersCloneTarget"></div>
+      <div class="drawer__footer">
+        <button class="btn btn--primary w100" id="btnApplyFiltersDrawer">Ver resultados</button>
+      </div>
+    </div>
+    <div class="backdrop" data-close="filters"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
