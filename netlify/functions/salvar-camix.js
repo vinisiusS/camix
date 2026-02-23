@@ -27,25 +27,28 @@ exports.handler = async (event) => {
       updated_at: new Date().toISOString(),
     };
 
-    const url = `${process.env.SUPABASE_URL}/rest/v1/user_camix?id=eq.1`;
+    // UPSERT: insere ou atualiza se já existir
+    const url = `${process.env.SUPABASE_URL}/rest/v1/user_camix?on_conflict=id`;
 
     const r = await fetch(url, {
-      method: "PATCH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
         Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        Prefer: "return=minimal",
+        // isso faz o "upsert" (merge)
+        Prefer: "resolution=merge-duplicates,return=representation",
       },
       body: JSON.stringify(payload),
     });
 
-    if (!r.ok) throw new Error(await r.text());
+    const text = await r.text();
+    if (!r.ok) throw new Error(text || "Erro no Supabase");
 
     return {
       statusCode: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: true }),
+      body: text || JSON.stringify({ ok: true }),
     };
   } catch (e) {
     return {
