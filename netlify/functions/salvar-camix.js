@@ -1,13 +1,16 @@
-import { createClient } from "@supabase/supabase-js";
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers: corsHeaders, body: "" };
+  }
 
-export async function handler(event) {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return { statusCode: 405, headers: corsHeaders, body: "Method Not Allowed" };
   }
 
   try {
@@ -24,14 +27,31 @@ export async function handler(event) {
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .from("user_camix")
-      .upsert(payload, { onConflict: "id" });
+    const url = `${process.env.SUPABASE_URL}/rest/v1/user_camix?id=eq.1`;
 
-    if (error) throw error;
+    const r = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(payload),
+    });
 
-    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+    if (!r.ok) throw new Error(await r.text());
+
+    return {
+      statusCode: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({ ok: true }),
+    };
   } catch (e) {
-    return { statusCode: 500, body: JSON.stringify({ ok: false, erro: e.message }) };
+    return {
+      statusCode: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({ ok: false, erro: e.message }),
+    };
   }
-}
+};
