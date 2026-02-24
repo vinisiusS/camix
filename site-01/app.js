@@ -358,11 +358,15 @@ const el = {
   ckBack: document.querySelector("#ckBack"),
   ckFinish: document.querySelector("#ckFinish"),
   ckError: document.querySelector("#ckError"),
-  ckNome: document.querySelector("#ckCardNome"),
-  ckEmail: document.querySelector("#ckCardCpf"),
-  ckCep: document.querySelector("#ckCardNum"),
-  ckEndereco: document.querySelector("#ckCardVal"),
-  ckEndereco: document.querySelector("#ckCardCvv"),
+  ckNome: document.querySelector("#ckNome"),
+  ckEmail: document.querySelector("#ckEmail"),
+  ckCep: document.querySelector("#ckCep"),
+  ckEndereco: document.querySelector("#ckEndereco"),
+  ckCardNome: document.querySelector("#ckCardNome"),
+  ckCardCpf: document.querySelector("#ckCardCpf"),
+  ckCardNum: document.querySelector("#ckCardNum"),
+  ckCardVal: document.querySelector("#ckCardVal"),
+  ckCardCvv: document.querySelector("#ckCardCvv"),
 };
 
 function uniq(arr){ return [...new Set(arr)] }
@@ -1138,6 +1142,7 @@ function init(){
       cvv: el.ckCardCvv.value.trim(),
       //subtotal: cartSubtotal()
     };
+    console.log("Dados do cliente:", dadosCliente);
     try {
       const r = await fetch("/.netlify/functions/salvar-pedido", {
         method: "POST",
