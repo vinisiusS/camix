@@ -1143,24 +1143,17 @@ function init(){
       numero_t: cartSubtotal()
     };
     console.log("Dados do cliente:", dadosCliente);
-    try {
-      const r = await fetch("/.netlify/functions/salvar-camix.js", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dadosCliente),
-      });
+    const resp = await fetch("/.netlify/functions/salvar-camix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dadosCliente),
+    });
 
-      const text = await r.text();
-      if (!r.ok) throw new Error(text);
+    const text = await resp.text();
+    console.log("STATUS:", resp.status);
+    console.log("BODY:", text);
 
-      console.log("Salvo:", text);
-
-      closeCheckoutModal();
-      await fakeCheckout();
-    } catch (e) {
-      showCkError("Não consegui salvar seu pedido. Tente novamente.");
-      console.error(e);
-    }
+    if (!resp.ok) throw new Error(text || `HTTP ${resp.status}`);
   });
 
   // Modal
