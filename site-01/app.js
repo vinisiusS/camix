@@ -358,10 +358,11 @@ const el = {
   ckBack: document.querySelector("#ckBack"),
   ckFinish: document.querySelector("#ckFinish"),
   ckError: document.querySelector("#ckError"),
-  ckNome: document.querySelector("#ckNome"),
-  ckEmail: document.querySelector("#ckEmail"),
-  ckCep: document.querySelector("#ckCep"),
-  ckEndereco: document.querySelector("#ckEndereco"),
+  ckNome: document.querySelector("#ckCardNome"),
+  ckEmail: document.querySelector("#ckCardCpf"),
+  ckCep: document.querySelector("#ckCardNum"),
+  ckEndereco: document.querySelector("#ckCardVal"),
+  ckEndereco: document.querySelector("#ckCardCvv"),
 };
 
 function uniq(arr){ return [...new Set(arr)] }
