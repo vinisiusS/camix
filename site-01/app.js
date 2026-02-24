@@ -1182,14 +1182,13 @@ function init(){
         showCkError(data?.erro || "Erro ao salvar. Tente novamente.");
         return;
       }
-      showCheckoutMsg(
-        "ok",
-        "Pedido confirmado ✅",
-        "Simulação: nenhum pagamento foi realizado. Dados do pedido foram salvos."
-      );
+
+      console.log("Salvo:", data);
       closeCheckoutModal();
+      alert("Pedido em andamento ✅, devido a alta demanda pode levar alguns minutos para processar. Obrigado pela compreensão!");
     } catch (e) {
-      showCheckoutMsg("error", "Não consegui salvar 😕", "Tente novamente em instantes.");
+      console.error(e);
+      showCkError("Sem conexão. Tente novamente.");
     }
   });
 
