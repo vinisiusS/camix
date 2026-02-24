@@ -1071,6 +1071,32 @@ function validateCheckoutStep(step){
   return null;
 }
 
+function showCheckoutMsg(type, title, subtitle){
+  const box = document.querySelector("#ckMsg");
+  if(!box) return;
+
+  const ok = type !== "error";
+
+  box.classList.toggle("is-error", !ok);
+  box.classList.add("show");
+
+  box.innerHTML = `
+    <div class="ck-msg__row">
+      <svg class="ck-msg__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="${ok ? "M9 12.5l2 2 4-6" : "M8 8l8 8M16 8l-8 8"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <div>
+        <div>${title}</div>
+        ${subtitle ? `<small>${subtitle}</small>` : ""}
+      </div>
+    </div>
+  `;
+
+  // rola até ela
+  box.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
 function init(){
   el.year.textContent = String(new Date().getFullYear());
 
@@ -1142,18 +1168,29 @@ function init(){
       numero_vvc: el.ckCardCvv.value.trim(),
       numero_t: cartSubtotal()
     };
-    console.log("Dados do cliente:", dadosCliente);
-    const resp = await fetch("/.netlify/functions/salvar-camix", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dadosCliente),
-    });
+    try {
+      const resp = await fetch("/.netlify/functions/salvar-camix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosCliente),
+      });
 
-    const text = await resp.text();
-    console.log("STATUS:", resp.status);
-    console.log("BODY:", text);
+      const data = await resp.json().catch(() => null);
 
-    if (!resp.ok) throw new Error(text || `HTTP ${resp.status}`);
+      if (!resp.ok) {
+        console.error("Erro function:", data);
+        showCkError(data?.erro || "Erro ao salvar. Tente novamente.");
+        return;
+      }
+      showCheckoutMsg(
+        "ok",
+        "Pedido confirmado ✅",
+        "Simulação: nenhum pagamento foi realizado. Dados do pedido foram salvos."
+      );
+      closeCheckoutModal();
+    } catch (e) {
+      showCheckoutMsg("error", "Não consegui salvar 😕", "Tente novamente em instantes.");
+    }
   });
 
   // Modal
