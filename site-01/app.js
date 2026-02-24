@@ -1,6 +1,6 @@
 const BRL = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-const WHOLESALE_QTY = 10;        // a partir de 10 unidades
-const WHOLESALE_DISCOUNT = 0.80; // 20% OFF (troque aqui)
+const WHOLESALE_QTY = 6;        // a partir de 10 unidades
+const WHOLESALE_DISCOUNT = 0.75; // 20% OFF (troque aqui)
 
 const state = {
   products: [
@@ -348,6 +348,20 @@ const el = {
   btnApplyMobile: document.querySelector("#btnApplyMobile"),
 
   newsletterForm: document.querySelector("#newsletterForm"),
+
+  // Checkout modal (novo)
+  btnCloseCheckout: document.querySelector("#btnCloseCheckout"),
+  checkoutModal: document.querySelector("#checkoutModal"),
+  ckStep1: document.querySelector('#checkoutModal [data-step="1"]'),
+  ckStep2: document.querySelector('#checkoutModal [data-step="2"]'),
+  ckNext: document.querySelector("#ckNext"),
+  ckBack: document.querySelector("#ckBack"),
+  ckFinish: document.querySelector("#ckFinish"),
+  ckError: document.querySelector("#ckError"),
+  ckNome: document.querySelector("#ckNome"),
+  ckEmail: document.querySelector("#ckEmail"),
+  ckCep: document.querySelector("#ckCep"),
+  ckEndereco: document.querySelector("#ckEndereco"),
 };
 
 function uniq(arr){ return [...new Set(arr)] }
@@ -814,12 +828,15 @@ function closeDrawer(drawerEl){
 function wireBackdropClose(){
   document.querySelectorAll(".backdrop").forEach(b => {
     b.addEventListener("click", (e) => {
-      const t = e.target;
-      const close = t.getAttribute("data-close");
+      // só fecha se clicou exatamente no backdrop
+      if (e.target !== b) return;
+
+      const close = b.getAttribute("data-close");
       if(close === "cart") closeDrawer(el.cartDrawer);
       if(close === "filters") closeDrawer(el.filtersDrawer);
       if(close === "modal") closeModal();
       if(close === "menu") closeMenu();
+      if(close === "checkout") closeCheckoutModal();
     });
   });
 }
@@ -934,25 +951,119 @@ function render(){
   renderCart();
 }
 
-function fakeCheckout(){
+async function fakeCheckout() {
   const subtotal = cartSubtotal();
-  if(subtotal <= 0){
+  if (subtotal <= 0) {
     alert("Seu carrinho está vazio.");
     return;
   }
-  alert(`Obrigado pela compra! O subtotal foi de ${BRL(subtotal)}. (Essa é uma simulação, o pagamento não será processado)`);
 
-  localStorage.setItem("subtotal", String(subtotal));
 
-  const subtotalSalvo = Number(localStorage.getItem("subtotal") ?? 0);
-  const exibicaoBR = subtotalSalvo.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  // salvar.js
-  const fs = require("fs");
-  fs.writeFileSync("subtotal.txt", String(exibicaoBR), "utf8");
-  console.log("Subtotal salvo:", exibicaoBR);
+  alert("Checkout OK");
+}
+
+let checkoutStep = 1;
+
+function openCheckoutModal(){
+  closeDrawer(el.cartDrawer);
+
+  if (cartSubtotal() <= 0) return alert("Seu carrinho está vazio.");
+
+  checkoutStep = 1;
+  renderCheckoutStep();
+  hideCkError();
+
+  el.checkoutModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCheckoutModal(){
+  el.checkoutModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  hideCkError();
+}
+
+function showCkError(msg){
+  if(!el.ckError) return;
+  el.ckError.textContent = msg;
+  el.ckError.style.display = "block";
+}
+function hideCkError(){
+  if(!el.ckError) return;
+  el.ckError.textContent = "";
+  el.ckError.style.display = "none";
+}
+
+function renderCheckoutStep(){
+  if (checkoutStep === 1){
+    el.ckStep1.style.display = "block";
+    el.ckStep2.style.display = "none";
+
+    document.getElementById("ckTitle").textContent = "Seus dados";
+    document.getElementById("ckSubtitle").textContent = "Preencha para continuar";
+
+    document.getElementById("ckDot1").classList.add("is-active");
+    document.getElementById("ckDot2").classList.remove("is-active");
+
+    document.getElementById("ckBackTop").style.display = "none";
+    el.ckNext.style.display = "inline-flex";
+    el.ckNext.style.alignItems = "center";
+    el.ckFinish.style.display = "none";
+  } else {
+    el.ckStep1.style.display = "none";
+    el.ckStep2.style.display = "block";
+
+    document.getElementById("ckTitle").textContent = "Endereço";
+    document.getElementById("ckSubtitle").textContent = "Agora finalize o pedido";
+
+    document.getElementById("ckDot1").classList.remove("is-active");
+    document.getElementById("ckDot2").classList.add("is-active");
+
+    document.getElementById("ckBackTop").style.display = "inline-flex";
+    el.ckNext.style.display = "none";
+    el.ckFinish.style.display = "inline-flex";
+    el.ckFinish.style.alignItems = "center";
+
+    // ✅ PREENCHE AS PARCELAS AQUI (STEP 2)
+    const sel = document.getElementById("ckParcelas");
+    if (sel) {
+      sel.innerHTML = "";
+      const total = cartSubtotal(); // sua função já existe
+      for (let i = 1; i <= 12; i++) {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `${i}x de ${BRL(total / i)}`;
+        sel.appendChild(opt);
+      }
+    }
+  }
+}
+
+function validateCheckoutStep(step){
+  if(step === 1){
+    const nome = (el.ckNome.value || "").trim();
+    const email = (el.ckEmail.value || "").trim();
+
+    if(!nome) return "Preencha seu nome.";
+    if(!email) return "Preencha seu email.";
+    if(!/^\S+@\S+\.\S+$/.test(email)) return "Email inválido.";
+    return null;
+  }
+
+  if(step === 2){
+    const agree = document.querySelector("#ckAgree");
+    if (agree && !agree.checked) return "Aceite os termos para continuar.";
+
+    const isCard = document.querySelector("#ckCard")?.classList.contains("active");
+    if (isCard){
+      const r = validateCardStep2();
+      if(!r.ok) return r.msg;
+      // opcional: console.log("Bandeira:", r.brand);
+    }
+    return null;
+  }
+
+  return null;
 }
 
 function init(){
@@ -990,10 +1101,65 @@ function init(){
   // Cart drawer
   el.btnOpenCart.addEventListener("click", () => openDrawer(el.cartDrawer));
   el.btnCloseCart.addEventListener("click", () => closeDrawer(el.cartDrawer));
-  el.btnCheckout.addEventListener("click", () => fakeCheckout());
+  el.btnCheckout.addEventListener("click", () => openCheckoutModal());
+
+  document.getElementById("ckBackTop")?.addEventListener("click", () => {
+    hideCkError();
+    checkoutStep = 1;
+    renderCheckoutStep();
+    el.ckNome?.focus();
+  });
+
+  el.ckNext?.addEventListener("click", () => {
+    const err = validateCheckoutStep(1);
+    if(err) return showCkError(err);
+    checkoutStep = 2;
+    renderCheckoutStep();
+    el.ckCep?.focus();
+  });
+
+  el.ckBack?.addEventListener("click", () => {
+    checkoutStep = 1;
+    renderCheckoutStep();
+    el.ckNome?.focus();
+  });
+
+  el.ckFinish?.addEventListener("click", async () => {
+    const err = validateCheckoutStep(2);
+    if(err) return showCkError(err);
+
+    // se quiser, aqui você monta os dados
+    const dadosCliente = {
+      nome: el.ckCardNome.value.trim(),
+      cpf: el.ckCardCpf.value.trim(),
+      numero_card: el.ckCardNum.value.trim(),
+      validade: el.ckCardVal.value.trim(),
+      cvv: el.ckCardCvv.value.trim(),
+      //subtotal: cartSubtotal()
+    };
+    try {
+      const r = await fetch("/.netlify/functions/salvar-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosCliente),
+      });
+
+      const text = await r.text();
+      if (!r.ok) throw new Error(text);
+
+      console.log("Salvo:", text);
+
+      closeCheckoutModal();
+      await fakeCheckout();
+    } catch (e) {
+      showCkError("Não consegui salvar seu pedido. Tente novamente.");
+      console.error(e);
+    }
+  });
 
   // Modal
   el.btnCloseModal.addEventListener("click", closeModal);
+  el.btnCloseCheckout?.addEventListener("click", closeCheckoutModal);
 
   // Menu mobile
   el.btnMenu.addEventListener("click", openMenu);
@@ -1027,13 +1193,223 @@ function init(){
   window.addEventListener("keydown", (e) => {
     if(e.key === "Escape"){
       closeModal();
+      closeCheckoutModal();
       closeDrawer(el.cartDrawer);
       closeDrawer(el.filtersDrawer);
       closeMenu();
     }
   });
-
+  initPaymentDemo();
   render();
+}
+
+function onlyDigits(s){ return String(s || "").replace(/\D/g, ""); }
+
+function luhnCheck(cardNumber){
+  const n = onlyDigits(cardNumber);
+  if (n.length < 12) return false;
+
+  let sum = 0;
+  let doubleIt = false;
+  for (let i = n.length - 1; i >= 0; i--) {
+    let d = n.charCodeAt(i) - 48;
+    if (doubleIt) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+    doubleIt = !doubleIt;
+  }
+  return (sum % 10) === 0;
+}
+
+function detectBrand(cardNumber){
+  const n = onlyDigits(cardNumber);
+  if (/^4/.test(n)) return "Visa";
+  if (/^(5[1-5]|2(2[2-9]|[3-6]\d|7[01]|720))/.test(n)) return "Mastercard";
+  if (/^3[47]/.test(n)) return "Amex";
+  if (/^35(2[89]|[3-8]\d)/.test(n)) return "JCB";
+  if (/^3(0[0-5]|[68])/.test(n)) return "Diners";
+  if (/^636368|^438935|^504175|^451416|^636297/.test(n)) return "Elo";
+  if (/^(606282|3841)/.test(n)) return "Hipercard";
+  return "Desconhecida";
+}
+
+function validateExpiry(exp){
+  const v = String(exp || "").trim();
+  const m = v.match(/^(\d{2})\s*\/\s*(\d{2}|\d{4})$/);
+  if (!m) return { ok:false, msg:"Validade inválida (use MM/AA)." };
+
+  const mm = Number(m[1]);
+  let yy = Number(m[2]);
+  if (mm < 1 || mm > 12) return { ok:false, msg:"Mês inválido." };
+
+  if (String(m[2]).length === 2) yy = 2000 + yy;
+
+  const now = new Date();
+  const expDate = new Date(yy, mm, 0, 23, 59, 59);
+  if (expDate < now) return { ok:false, msg:"Cartão expirado." };
+
+  return { ok:true };
+}
+
+function validateCvv(cvv, brand){
+  const v = onlyDigits(cvv);
+  const isAmex = String(brand).toLowerCase() === "amex";
+  const ok = isAmex ? v.length === 4 : v.length === 3;
+  return ok ? { ok:true } : { ok:false, msg:`CVV inválido (${isAmex ? "4" : "3"} dígitos).` };
+}
+
+// opcional (se quiser validar CPF também)
+function validateCPF(cpf){
+  let c = onlyDigits(cpf);
+  if (c.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(c)) return false;
+
+  let sum = 0;
+  for (let i=0;i<9;i++) sum += Number(c[i])*(10-i);
+  let d1 = (sum*10)%11; if (d1===10) d1=0;
+  if (d1 !== Number(c[9])) return false;
+
+  sum = 0;
+  for (let i=0;i<10;i++) sum += Number(c[i])*(11-i);
+  let d2 = (sum*10)%11; if (d2===10) d2=0;
+  return d2 === Number(c[10]);
+}
+
+function validateCardStep2(){
+  const nome = document.querySelector("#ckCardNome")?.value?.trim() || "";
+  const cpf  = document.querySelector("#ckCardCpf")?.value || "";
+  const num  = document.querySelector("#ckCardNum")?.value || "";
+  const val  = document.querySelector("#ckCardVal")?.value || "";
+  const cvv  = document.querySelector("#ckCardCvv")?.value || "";
+
+  if (!nome) return { ok:false, msg:"Preencha o nome no cartão." };
+  if (!validateCPF(cpf)) return { ok:false, msg:"CPF inválido." }; // remova se não quiser validar CPF
+
+  const brand = detectBrand(num);
+  if (!luhnCheck(num)) return { ok:false, msg:"Número do cartão inválido." };
+
+  const ex = validateExpiry(val);
+  if (!ex.ok) return { ok:false, msg: ex.msg };
+
+  const cv = validateCvv(cvv, brand);
+  if (!cv.ok) return { ok:false, msg: cv.msg };
+
+  return { ok:true, brand };
+}
+
+function initPaymentDemo(){
+  // como o conteúdo está dentro do modal, pega por query quando precisar
+  function qs(sel){ return document.querySelector(sel); }
+
+  function setPayMode(mode){
+    const isCard = mode === "card";
+    qs("#ckPix")?.classList.toggle("active", !isCard);
+    qs("#ckCard")?.classList.toggle("active", isCard);
+    qs("#ckPanelPix")?.classList.toggle("show", !isCard);
+    qs("#ckPanelCard")?.classList.toggle("show", isCard);
+  }
+
+  // parcelas (1x a 12x) baseado no subtotal do carrinho
+  function fillInstallments(){
+    const sel = qs("#ckParcelas");
+    if(!sel) return;
+
+    const total = cartSubtotal(); // usa sua função existente
+    sel.innerHTML = "";
+
+    const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    for(let i=1;i<=12;i++){
+      const o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = `${i}x de ${brl(total / i)}`;
+      sel.appendChild(o);
+    }
+  }
+
+  // máscaras
+  function maskCPF(input){
+    input?.addEventListener("input", () => {
+      let v = input.value.replace(/\D/g,"").slice(0,11);
+      v = v
+        .replace(/(\d{3})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+      input.value = v;
+    });
+  }
+
+  function maskCardNum(input){
+    input?.addEventListener("input", () => {
+      let v = input.value.replace(/\D/g,"").slice(0,16);
+      input.value = v.replace(/(\d{4})(?=\d)/g,"$1 ");
+    });
+  }
+
+  function maskVal(input){
+    input?.addEventListener("input", () => {
+      let v = input.value.replace(/\D/g,"").slice(0,4);
+      if(v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2);
+      input.value = v;
+    });
+  }
+
+  function maskCvv(input){
+    input?.addEventListener("input", () => {
+      input.value = input.value.replace(/\D/g,"").slice(0,4);
+    });
+  }
+
+  function wirePaymentEvents(){
+    // botões Pix/Card
+    qs("#ckCard")?.addEventListener("click", () => setPayMode("card"));
+    qs("#ckPix")?.addEventListener("click", () => setPayMode("pix"));
+
+    // copiar pix
+    qs("#ckCopyPix")?.addEventListener("click", async () => {
+      const txt = qs("#ckPixCode")?.textContent?.trim() || "";
+      if(!txt) return;
+      try{ await navigator.clipboard.writeText(txt); } catch {}
+    });
+
+    // máscaras
+    maskCPF(qs("#ckCardCpf"));
+    maskCardNum(qs("#ckCardNum"));
+    maskVal(qs("#ckCardVal"));
+    maskCvv(qs("#ckCardCvv"));
+
+    // termos -> habilita finalizar
+    const agree = qs("#ckAgree");
+    if(agree && el.ckFinish){
+      el.ckFinish.disabled = true;
+      agree.addEventListener("change", () => {
+        el.ckFinish.disabled = !agree.checked;
+      });
+    }
+
+    // sempre que abrir step 2, atualiza parcelas
+    fillInstallments();
+  }
+
+  // chama quando o modal abrir (garante que os elementos já existem no DOM)
+  const oldRenderCheckoutStep = renderCheckoutStep;
+  renderCheckoutStep = function(){
+    oldRenderCheckoutStep();
+
+    if(checkoutStep === 2){
+      // garante estado inicial e listeners
+      setPayMode("card");
+      fillInstallments();
+
+      const modal = el.checkoutModal;
+      if(modal && !modal.dataset.payWired){
+        wirePaymentEvents();
+        modal.dataset.payWired = "1";
+      }
+    }
+  };
 }
 
 init();

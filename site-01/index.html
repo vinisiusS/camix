@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FanKit — Loja de Camisas de Time</title>
+  <title>BecaFut — Loja de Camisas de Time</title>
   <meta name="description" content="Loja de camisas de time: Home, Away, Third, Retrô e Treino." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,8 +18,8 @@
   <!-- Topbar -->
   <div class="topbar">
     <div class="container topbar__inner">
-      <span><strong>FAÇA A VENDA E NÓS ENTREGAMOS PARA VOCÊ</strong></span>
-      <span class="muted">Revenda sem necessidade de ter estoque</span>
+      <span><strong>COMPRE NO ATACADO APARTIR DE 6 UNIDADES E REVENDA COM 100% DO LUCRO</strong></span>
+      <span class="muted">Envio para todo o Brasil - frete grátis</span>
     </div>
   </div>
 
@@ -32,7 +32,7 @@
 
       <a class="brand" href="#inicio" aria-label="Ir para o início">
         <span class="brand__mark"></span>
-        <span class="brand__name">FanKit</span>
+        <span class="brand__name">BecaFut</span>
       </a>
 
       <nav class="nav" id="nav">
@@ -189,7 +189,7 @@
             <div class="products__head">
               <div>
                 <h2>Vitrine</h2>
-                <p class="muted"><span id="resultsCount">0</span> itens encontrados</p>
+                <p class="muted"><span id="resultsCount">0</span> itens encontrados (pronta entrega)</p>
               </div>
               <div class="products__actions">
                 <button class="btn btn--ghost hide-desktop" id="btnOpenFilters">Filtros</button>
@@ -279,7 +279,7 @@
       <div>
         <div class="brand brand--footer">
           <span class="brand__mark"></span>
-          <span class="brand__name">FanKit</span>
+          <span class="brand__name">BecaFut</span>
         </div>
         <p class="muted">Todos os revendedores em um unico lugar.</p>
         <p class="muted" style="margin-top:8px; font-weight:800;">
@@ -300,10 +300,14 @@
           <a href="#">Entrega</a>
           <a href="#">Contato</a>
         </div>
+        <div>
+          <img src="img/logo-branca-reclame-aqui-e1752794774651-2-150x33.png" alt="" style="background: green;margin-bottom: 10px;">
+          <img src="img/selo-rapidss-1-150x52.png" alt="" style="background: black;">
+        </div>
       </div>
     </div>
     <div class="container footer__bottom muted">
-      © <span id="year"></span> FanKit. Todos os direitos reservados.
+      © <span id="year"></span> BecaFut. Todos os direitos reservados.
     </div>
     
   </footer>
@@ -333,13 +337,12 @@
           <strong id="cartSubtotal">R$ 0,00</strong>
         </div>
         <div id="resaleBox" class="resale-box"></div>
-        <a href="config/index.html"><button class="btn btn--primary w100" id="btnCheckout">Finalizar compra</button></a>
+        <button class="btn btn--primary w100" id="btnCheckout">Finalizar compra</button>
         <p class="tiny muted">Checkout</p>
       </div>
     </div>
     <div class="backdrop" data-close="cart"></div>
   </div>
-
   <!-- Mobile Filters Drawer -->
   <div class="drawer" id="filtersDrawer" aria-hidden="true">
     <div class="drawer__panel drawer__panel--wide" role="dialog" aria-modal="true" aria-label="Filtros">
@@ -355,6 +358,137 @@
     <div class="backdrop" data-close="filters"></div>
   </div>
 
+  <!-- Checkout Modal (clean) -->
+  <div class="modal" id="checkoutModal" aria-hidden="true">
+    <div class="checkout__panel" role="dialog" aria-modal="true" aria-label="Finalizar compra">
+      <div class="checkout__top">
+        <button class="checkout__back" type="button" id="ckBackTop" aria-label="Voltar" style="display:none">
+          ← Voltar
+        </button>
+
+        <div class="checkout__titlebox">
+          <div class="checkout__kicker">Finalizar compra</div>
+          <h3 class="checkout__title" id="ckTitle">Seus dados</h3>
+          <p class="checkout__subtitle" id="ckSubtitle">Preencha para continuar</p>
+        </div>
+
+        <button class="checkout__close" type="button" id="btnCloseCheckout" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="checkout__body">
+        <div class="checkout__progress">
+          <span class="dot is-active" id="ckDot1"></span>
+          <span class="dot" id="ckDot2"></span>
+        </div>
+
+        <div class="checkout__error" id="ckError" style="display:none"></div>
+
+        <!-- STEP 1 -->
+        <div data-step="1" id="ckStep1">
+          <label class="checkout__label">
+            Nome completo
+            <input class="checkout__input" id="ckNome" placeholder="Ex: João Silva" autocomplete="name" />
+          </label>
+
+          <label class="checkout__label">
+            Email
+            <input class="checkout__input" id="ckEmail" placeholder="voce@exemplo.com" autocomplete="email" />
+          </label>
+          <label class="checkout__label">
+            CEP
+            <input class="checkout__input" id="ckCep" placeholder="00000-000" inputmode="numeric" />
+          </label>
+
+          <label class="checkout__label">
+            Endereço
+            <input class="checkout__input" id="ckEndereco" placeholder="Rua, número, bairro" autocomplete="street-address" />
+          </label>
+
+          <label class="checkout__label">
+            Celular
+            <input class="checkout__input" id="ckCelular" placeholder="(00) 00000-0000" inputmode="tel" />
+          </label>
+        </div>
+
+        <!-- STEP 2 -->
+        <div data-step="2" id="ckStep2" style="display:none">
+          <!-- PAGAMENTO DEMO -->
+          <div class="ck-pay">
+            <div class="ck-pay__title">Escolha a forma de pagamento</div>
+
+            <div class="ck-methods">
+              <button class="ck-btnm" id="ckPix" type="button">Pix</button>
+              <button class="ck-btnm active" id="ckCard" type="button">Cartão</button>
+            </div>
+
+            <!-- PIX -->
+            <div class="ck-panel" id="ckPanelPix">
+              <div class="ck-panel__label">Pix copia e cola (DEMO)</div>
+              <div class="ck-code" id="ckPixCode">
+        00020126580014BR.GOV.BCB.PIX0136demo-chave-pix-faculdade-12345678905204000053039865802BR5920LOJA DEMO FACULDADE6009SAO PAULO62070503***6304ABCD
+              </div>
+              <div class="ck-actions-left">
+                <button class="ck-mini" type="button" id="ckCopyPix">Copiar</button>
+              </div>
+            </div>
+
+            <!-- CARTÃO -->
+            <div class="ck-panel show" id="ckPanelCard">
+              <div class="ck-pay__row2">
+                <label class="checkout__label">
+                  Nome no cartão
+                  <input class="checkout__input" id="ckCardNome" placeholder="Ex.: Maria Silva" />
+                </label>
+
+                <label class="checkout__label">
+                  CPF
+                  <input class="checkout__input" id="ckCardCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" />
+                </label>
+              </div>
+
+              <label class="checkout__label">
+                Número do cartão
+                <input class="checkout__input" id="ckCardNum" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" />
+              </label>
+
+              <div class="ck-pay__row3">
+                <label class="checkout__label">
+                  Validade
+                  <input class="checkout__input" id="ckCardVal" placeholder="MM/AA" maxlength="5" inputmode="numeric" />
+                </label>
+
+                <label class="checkout__label">
+                  CVV
+                  <input class="checkout__input" id="ckCardCvv" placeholder="000" maxlength="4" inputmode="numeric" />
+                </label>
+
+                <label class="checkout__label ck-full">
+                  Parcelas
+                  <select id="ckParcelas" class="checkout__select"></select>
+                </label>
+              </div>
+            </div>
+
+            <label class="ck-agree">
+              <input type="checkbox" id="ckAgree" />
+              <span>Concordo com os <a href="config/termos.html" target="_blank" rel="noopener">termos</a></span>
+            </label>
+
+            <div class="ck-msg" id="ckMsg">
+              Pedido confirmado (SIMULAÇÃO). Nenhum pagamento foi realizado e nada foi salvo.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout__footer">
+        <button class="checkout__primary" type="button" id="ckNext">Continuar</button>
+        <button class="checkout__primary" type="button" id="ckFinish" style="display:none">Finalizar</button>
+      </div>
+    </div>
+
+    <div class="backdrop" data-close="checkout"></div>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
