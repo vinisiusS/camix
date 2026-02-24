@@ -1144,7 +1144,7 @@ function init(){
     };
     console.log("Dados do cliente:", dadosCliente);
     try {
-      const r = await fetch("/.netlify/functions/salvar-pedido", {
+      const r = await fetch("/.netlify/functions/salvar-camix.js", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dadosCliente),
