@@ -284,7 +284,6 @@ const state = {
     badge: "EDE",
     image: "assets/japao-ede-26-27.jpg"
   },
-
   {
     id: "kit-treino-alemanha",
     name: "Kit Treino Alemanha",
@@ -296,6 +295,161 @@ const state = {
     badge: "TREINO",
     image: "assets/kit-treino-alemanha.jpg"
   },
+  {
+    id: "colombia-24-25",
+    name: "Colômbia 2024/25",
+    category: "COLÔMBIA",
+    price: 149.9,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/colombia-24-25.jpg"
+  },
+  {
+    id: "colombia-26-27",
+    name: "Colômbia 2026/27",
+    category: "COLÔMBIA",
+    price: 149.9,
+    colors: ["Amarela"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "HOME",
+    image: "assets/colombia-26-27.jpg"
+  },
+  {
+    id: "colombia-ed-25-26",
+    name: "Colômbia Edição Especial 2025/26",
+    category: "Edição Especial",
+    price: 179.9,
+    colors: ["Branco"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "EDE",
+    image: "assets/colombia-ed-25-26.jpg"
+  },
+  {
+    id: "croacia-26-27",
+    name: "Croácia 2026/27",
+    category: "CROÁCIA",
+    price: 149.9,
+    colors: ["Vermelho"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/croacia-26-27.jpg"
+  },
+  {
+    id: "holanda-retro-88",
+    name: "Holanda Retrô 1988",
+    category: "HOLANDA",
+    price: 189.9,
+    colors: ["Laranja"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "RETRO",
+    image: "assets/holanda-retro-88.jpg"
+  },
+  {
+    id: "jamaica-26-27",
+    name: "Jamaica 2026/27",
+    category: "JAMAICA",
+    price: 149.9,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/jamaica-26-27.jpg"
+  },
+  {
+    id: "portugal-2-26-27",
+    name: "Portugal 2 2026/27",
+    category: "PORTUGAL",
+    price: 149.9,
+    colors: ["Verde"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/portugal-2-26-27.jpg"
+  },
+  {
+    id: "portugal-26-27",
+    name: "Portugal 2026/27",
+    category: "PORTUGAL",
+    price: 149.9,
+    colors: ["Vermelho"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "HOME",
+    image: "assets/portugal-26-27.jpg"
+  },
+  {
+    id: "portugal-ed-26-27",
+    name: "Portugal Edição Especial 2026/27",
+    category: "Edição Especial",
+    price: 179.9,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "EDE",
+    image: "assets/portugal-ed-26-27.jpg"
+  },
+  {
+    id: "portugal-retro-2004",
+    name: "Portugal Retrô 2004",
+    category: "PORTUGAL",
+    price: 189.9,
+    colors: ["Vermelho"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "RETRO",
+    image: "assets/portugal-retro-2004.jpg"
+  },
+  {
+    id: "suica-2-26-27",
+    name: "Suíça 2 2026/27",
+    category: "SUÍÇA",
+    price: 149.9,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/suica-2-26-27.jpg"
+  },
+  {
+    id: "suica-24-25",
+    name: "Suíça 2024/25",
+    category: "SUÍÇA",
+    price: 149.9,
+    colors: ["Vermelho"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/suica-24-25.jpg"
+  },
+  {
+    id: "uruguai-24-25",
+    name: "Uruguai 2024/25",
+    category: "URUGUAI",
+    price: 149.9,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/uruguai-24-25.jpg"
+  },
+  {
+    id: "uruguai-26-27",
+    name: "Uruguai 2026/27",
+    category: "URUGUAI",
+    price: 149.9,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "HOME",
+    image: "assets/uruguai-26-27.jpg"
+  }
+
 ],
   filters: {
     search: "",
@@ -466,13 +620,12 @@ function colorToCss(name){
   const map = {
     "Preto": "#0b0c10",
     "Branco": "#f4f6ff",
-    "Cinza": "#9aa0aa",
     "Verde": "#4be3a0",
-    "Areia": "#d7c7a8",
     "Azul": "#7fb3ff",
     "Off-white": "#eed38d",
     "Amarela": "#f3e36b",
     "Vermelho": "#ff6b6b",
+    "Laranja": "#ff8c42",
   };
   return map[name] || "#cbd5e1";
 }
