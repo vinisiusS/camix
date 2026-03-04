@@ -1,6 +1,6 @@
 const BRL = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-const WHOLESALE_QTY = 6;        // a partir de 10 unidades
-const WHOLESALE_DISCOUNT = 0.75; // 20% OFF (troque aqui)
+const WHOLESALE_QTY = 10;        // a partir de 10 unidades
+const WHOLESALE_DISCOUNT = 0.70; // 20% OFF (troque aqui)
 
 const state = {
   products: window.PRODUCTS || [],
