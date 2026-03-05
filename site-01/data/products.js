@@ -80,7 +80,7 @@ window.PRODUCTS = [
     id: "brasil-26-27",
     name: "Brasil 2026/27",
     category: "BRASIL",
-    price: 129.9,
+    price: 149.9,
     colors: ["Amarela"],
     sizes: ["P", "M", "G", "GG"],
     featured: true,

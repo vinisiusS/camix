@@ -1,6 +1,6 @@
 const BRL = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const WHOLESALE_QTY = 10;        // a partir de 10 unidades
-const WHOLESALE_DISCOUNT = 0.70; // 20% OFF (troque aqui)
+const WHOLESALE_DISCOUNT = 0.70; // 70% OFF (troque aqui)
 
 const state = {
   products: window.PRODUCTS || [],
@@ -336,14 +336,14 @@ function openProductModal(p){
 
   el.modalContent.querySelector("#modalAdd").addEventListener("click", () => {
     const q = Math.max(1, Number(qtyInput.value || 1));
-    addToCart({ id: p.id, name: p.name, price: p.price, variant: { size: chosenSize, color: chosenColor } }, q);
+    addToCart({ id: p.id, name: p.name, price: p.price, image: p.image, variant: { size: chosenSize, color: chosenColor } }, q);
     closeModal();
     openDrawer(el.cartDrawer);
   });
 
   el.modalContent.querySelector("#modalBuy").addEventListener("click", () => {
     const q = Math.max(1, Number(qtyInput.value || 1));
-    addToCart({ id: p.id, name: p.name, price: p.price, variant: { size: chosenSize, color: chosenColor } }, q);
+    addToCart({ id: p.id, name: p.name, price: p.price, image: p.image, variant: { size: chosenSize, color: chosenColor } }, q);
     closeModal();
     openDrawer(el.cartDrawer);
     fakeCheckout();
@@ -362,6 +362,11 @@ function closeModal(){
 }
 
 /* Cart */
+function totalQtyByProductId(productId){
+  return state.cart
+    .filter(i => i.id === productId)
+    .reduce((sum, i) => sum + i.qty, 0);
+}
 function loadCart(){
   try{
     return JSON.parse(localStorage.getItem("cart_v1") || "[]");
@@ -405,31 +410,40 @@ function changeQty(key, delta){
   renderCart();
 }
 function unitPrice(item){
-  const base = item.basePrice ?? item.price; // compatibilidade
-  return item.qty >= WHOLESALE_QTY ? base * (1 - WHOLESALE_DISCOUNT) : base;
+  const base = item.basePrice ?? item.price;
+  const total = totalQtyByProductId(item.id);
+  return total >= WHOLESALE_QTY ? base * (1 - WHOLESALE_DISCOUNT) : base;
 }
 
 function lineTotal(item){
   return unitPrice(item) * item.qty;
 }
 function resaleSummary(){
-  const eligible = state.cart.filter(i => i.qty >= WHOLESALE_QTY);
-  if (eligible.length === 0) return null;
+  // ids elegíveis (somando todas variações)
+  const eligibleIds = uniq(
+    state.cart
+      .map(i => i.id)
+      .filter(id => totalQtyByProductId(id) >= WHOLESALE_QTY)
+  );
 
-  let revenue = 0; // vendendo pelo preço normal
-  let cost = 0;    // comprando no atacado
+  if (eligibleIds.length === 0) return null;
 
-  eligible.forEach(i => {
-    const base = i.basePrice ?? i.price;
-    const atacado = unitPrice(i); // já aplica desconto quando qty >= WHOLESALE_QTY
-    revenue += base * i.qty;
-    cost += atacado * i.qty;
-  });
+  let revenue = 0;
+  let cost = 0;
+
+  state.cart
+    .filter(i => eligibleIds.includes(i.id))
+    .forEach(i => {
+      const base = i.basePrice ?? i.price;
+      const atacado = unitPrice(i); // agora olha o total por id
+      revenue += base * i.qty;
+      cost += atacado * i.qty;
+    });
 
   const profit = Math.max(0, revenue - cost);
   const margin = revenue > 0 ? (profit / revenue) : 0;
 
-  return { revenue, cost, profit, margin, eligibleCount: eligible.length };
+  return { revenue, cost, profit, margin, eligibleCount: eligibleIds.length };
 }
 function cartSubtotal(){
   return state.cart.reduce((sum, i) => sum + lineTotal(i), 0);
@@ -475,6 +489,7 @@ function renderCart(){
     const key = cartKey(i);
     const div = document.createElement("div");
     div.className = "cart-item";
+    const totalDoProduto = totalQtyByProductId(i.id);
     div.innerHTML = `
         <div class="cart-thumb">
         ${i.image ? `<img class="cart__img" src="${i.image}" alt="${i.name}">` : ``}
@@ -488,17 +503,17 @@ function renderCart(){
             </div>
 
             ${
-            i.qty >= WHOLESALE_QTY
+              totalDoProduto >= WHOLESALE_QTY
                 ? `<div class="muted" style="margin-top:6px; font-weight:900;">
                     Atacado aplicado ✅ (${Math.round(WHOLESALE_DISCOUNT*100)}% OFF)
-                </div>
-                <div class="muted" style="margin-top:6px; font-weight:900;">
+                  </div>
+                  <div class="muted" style="margin-top:6px; font-weight:900;">
                     Unit: <span style="text-decoration:line-through; opacity:.7;">${BRL(i.basePrice ?? i.price)}</span>
                     <span style="margin-left:8px; color:var(--text);">${BRL(unitPrice(i))}</span>
-                </div>`
+                  </div>`
                 : `<div class="muted" style="margin-top:6px; font-weight:900;">
                     Unit: ${BRL(i.basePrice ?? i.price)}
-                </div>`
+                  </div>`
             }
 
             <div class="price" style="margin-top:6px">
