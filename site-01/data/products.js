@@ -961,5 +961,38 @@ window.PRODUCTS = [
     featured: false,
     badge: "HOME",
     image: "assets/sao-paulo-25-26.jpg"
-  }
+  },
+  {
+    id: "vasco-2-26-27",
+    name: "Vasco 2 2026/27",
+    category: "BRASILEIRÃO",
+    price: 100.0,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/vasco-2-26-27.jpeg"
+  },
+  {
+    id: "vasco-26-27",
+    name: "Vasco 2026/27",
+    category: "BRASILEIRÃO",
+    price: 100.0,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/vasco-26-27.jpeg"
+  },
+  {
+    id: "vasco-ede-25-26",
+    name: "Vasco 2026/27",
+    category: "Edição Especial",
+    price: 100.0,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "EDE",
+    image: "assets/vasco-ede-25-26.jpeg"
+  },
 ];
