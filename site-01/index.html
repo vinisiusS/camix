@@ -336,6 +336,29 @@
           <span class="muted">Subtotal</span>
           <strong id="cartSubtotal">R$ 0,00</strong>
         </div>
+
+        <div class="coupon-box">
+          <label class="label" for="couponCode">Cupom</label>
+          <div class="coupon-box__row">
+            <input type="text" id="couponCode" class="coupon-input" placeholder="Digite seu cupom" />
+            <button class="btn btn--ghost" id="btnApplyCoupon" type="button">Aplicar</button>
+          </div>
+          <button class="link" id="btnRemoveCoupon" type="button" style="display:none; margin-top:8px;">
+            Remover cupom
+          </button>
+          <div class="tiny muted" id="couponFeedback" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="row" id="cartDiscountRow" style="display:none;">
+          <span class="muted">Desconto</span>
+          <strong id="cartDiscount">-R$ 0,00</strong>
+        </div>
+
+        <div class="row">
+          <span class="muted">Total</span>
+          <strong id="cartTotal">R$ 0,00</strong>
+        </div>
+
         <div id="resaleBox" class="resale-box"></div>
         <button class="btn btn--primary w100" id="btnCheckout">Finalizar compra</button>
         <p class="tiny muted">Checkout</p>

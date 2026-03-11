@@ -12,6 +12,7 @@ const state = {
     sort: "featured",
   },
   cart: loadCart(),
+  appliedCoupon: loadCoupon(),
 };
 
 // Elements
@@ -27,6 +28,14 @@ const el = {
   colorOptions: document.querySelector("#colorOptions"),
   sortBy: document.querySelector("#sortBy"),
   btnReset: document.querySelector("#btnReset"),
+
+  couponCode: document.querySelector("#couponCode"),
+  btnApplyCoupon: document.querySelector("#btnApplyCoupon"),
+  btnRemoveCoupon: document.querySelector("#btnRemoveCoupon"),
+  couponFeedback: document.querySelector("#couponFeedback"),
+  cartDiscountRow: document.querySelector("#cartDiscountRow"),
+  cartDiscount: document.querySelector("#cartDiscount"),
+  cartTotal: document.querySelector("#cartTotal"),
 
   cartCount: document.querySelector("#cartCount"),
   cartDrawer: document.querySelector("#cartDrawer"),
@@ -374,6 +383,104 @@ function loadCart(){
     return [];
   }
 }
+function loadCoupon(){
+  try{
+    return JSON.parse(localStorage.getItem("coupon_v1") || "null");
+  }catch{
+    return null;
+  }
+}
+
+function saveCoupon(){
+  localStorage.setItem("coupon_v1", JSON.stringify(state.appliedCoupon));
+}
+
+function clearCoupon(){
+  state.appliedCoupon = null;
+  localStorage.removeItem("coupon_v1");
+}
+
+function normalizeCouponCode(code){
+  return String(code || "").trim().toUpperCase();
+}
+
+/*
+  Aqui você cadastra os cupons.
+  Depois no futuro é só editar este objeto.
+*/
+function getAvailableCoupons(){
+  return {
+    PRIMEIRA10: {
+      code: "PRIMEIRA10",
+      type: "percent", // percent | fixed
+      value: 10,       // 10%
+      active: false
+    },
+    BECA10: {
+      code: "BECA10",
+      type: "percent",
+      value: 10,
+      active: true
+    },
+    DESCONTO20: {
+      code: "DESCONTO20",
+      type: "fixed",   // desconto fixo em reais
+      value: 20,
+      active: false
+    }
+  };
+}
+
+function findCoupon(code){
+  const coupons = getAvailableCoupons();
+  const normalized = normalizeCouponCode(code);
+  return coupons[normalized] || null;
+}
+
+function getCouponDiscount(subtotal){
+  const coupon = state.appliedCoupon;
+  if (!coupon || subtotal <= 0) return 0;
+
+  let discount = 0;
+
+  if (coupon.type === "percent") {
+    discount = subtotal * (coupon.value / 100);
+  } else if (coupon.type === "fixed") {
+    discount = coupon.value;
+  }
+
+  return Math.max(0, Math.min(discount, subtotal));
+}
+
+function cartTotalFinal(){
+  const subtotal = cartSubtotal();
+  const discount = getCouponDiscount(subtotal);
+  const total = cartTotalFinal();
+  return Math.max(0, subtotal - discount);
+}
+function applyCoupon(code){
+  const coupon = findCoupon(code);
+
+  if (!coupon || !coupon.active) {
+    return {
+      ok: false,
+      msg: "Cupom inválido."
+    };
+  }
+
+  state.appliedCoupon = {
+    code: coupon.code,
+    type: coupon.type,
+    value: coupon.value
+  };
+
+  saveCoupon();
+
+  return {
+    ok: true,
+    msg: `Cupom ${coupon.code} aplicado com sucesso.`
+  };
+}
 function saveCart(){
   localStorage.setItem("cart_v1", JSON.stringify(state.cart));
 }
@@ -449,28 +556,66 @@ function cartSubtotal(){
   return state.cart.reduce((sum, i) => sum + lineTotal(i), 0);
 }
 function renderCart(){
+  const subtotal = cartSubtotal();
+  const discount = getCouponDiscount(subtotal);
+  const total = Math.max(0, subtotal - discount);
+
   el.cartCount.textContent = String(state.cart.reduce((a,i)=> a+i.qty, 0));
-  el.cartSubtotal.textContent = BRL(cartSubtotal());
+  el.cartSubtotal.textContent = BRL(subtotal);
+
+  if (el.cartTotal) {
+    el.cartTotal.textContent = BRL(total);
+  }
+
   const info = resaleSummary();
 
-    if (!el.resaleBox) return;
-
-    if (!info) {
-    el.resaleBox.innerHTML = `
-        <div>💡 Quer revender?</div>
-        <small>Chegando em <strong>${WHOLESALE_QTY} un.</strong> no mesmo item/variação, ativa preço de atacado e aparece a simulação de lucro.</small>
-    `;
+  if (el.cartDiscountRow && el.cartDiscount) {
+    if (discount > 0) {
+      el.cartDiscountRow.style.display = "flex";
+      el.cartDiscount.textContent = `- ${BRL(discount)}`;
     } else {
-    el.resaleBox.innerHTML = `
-        <div>💡 Simulação de revenda (vendendo pelo preço do site)</div>
-        <small>
-        Faturamento: <strong>${BRL(info.revenue)}</strong> •
-        Custo no atacado: <strong>${BRL(info.cost)}</strong><br/>
-        Lucro estimado: <strong>${BRL(info.profit)}</strong> •
-        Margem: <strong>${Math.round(info.margin * 100)}%</strong>
-        </small>
-    `;
+      el.cartDiscountRow.style.display = "none";
+      el.cartDiscount.textContent = "- R$ 0,00";
     }
+  }
+
+  if (el.couponCode && state.appliedCoupon) {
+    el.couponCode.value = state.appliedCoupon.code;
+  }
+
+  if (el.btnRemoveCoupon) {
+    el.btnRemoveCoupon.style.display = state.appliedCoupon ? "inline-block" : "none";
+  }
+
+  if (el.couponFeedback) {
+    if (state.appliedCoupon) {
+      const label =
+        state.appliedCoupon.type === "percent"
+          ? `${state.appliedCoupon.value}% OFF`
+          : `${BRL(state.appliedCoupon.value)} OFF`;
+
+      el.couponFeedback.textContent = `Cupom ativo: ${state.appliedCoupon.code} (${label})`;
+    } else {
+      el.couponFeedback.textContent = "";
+    }
+  }
+
+  if (!info) {
+    el.resaleBox.innerHTML = `
+      <div>💡 Quer revender?</div>
+      <small>Chegando em <strong>${WHOLESALE_QTY} un.</strong> no mesmo item/variação, ativa preço de atacado e aparece a simulação de lucro.</small>
+    `;
+  } else {
+    el.resaleBox.innerHTML = `
+      <div>💡 Simulação de revenda (vendendo pelo preço do site)</div>
+      <small>
+      Faturamento: <strong>${BRL(info.revenue)}</strong> •
+      Custo no atacado: <strong>${BRL(info.cost)}</strong><br/>
+      Lucro estimado: <strong>${BRL(info.profit)}</strong> •
+      Margem: <strong>${Math.round(info.margin * 100)}%</strong>
+      </small>
+    `;
+  }
 
   if(state.cart.length === 0){
     el.cartItems.innerHTML = `
@@ -490,43 +635,45 @@ function renderCart(){
     const div = document.createElement("div");
     div.className = "cart-item";
     const totalDoProduto = totalQtyByProductId(i.id);
+
     div.innerHTML = `
-        <div class="cart-thumb">
+      <div class="cart-thumb">
         ${i.image ? `<img class="cart__img" src="${i.image}" alt="${i.name}">` : ``}
-        </div>
-        <div>
-            <h4>${i.name}</h4>
-            <div class="muted">${i.variant.size} • ${i.variant.color}</div>
+      </div>
+      <div>
+        <h4>${i.name}</h4>
+        <div class="muted">${i.variant.size} • ${i.variant.color}</div>
 
-            <div class="muted" style="margin-top:6px; font-weight:900;">
-            Qtd: ${i.qty}
-            </div>
-
-            ${
-              totalDoProduto >= WHOLESALE_QTY
-                ? `<div class="muted" style="margin-top:6px; font-weight:900;">
-                    Atacado aplicado ✅ (${Math.round(WHOLESALE_DISCOUNT*100)}% OFF)
-                  </div>
-                  <div class="muted" style="margin-top:6px; font-weight:900;">
-                    Unit: <span style="text-decoration:line-through; opacity:.7;">${BRL(i.basePrice ?? i.price)}</span>
-                    <span style="margin-left:8px; color:var(--text);">${BRL(unitPrice(i))}</span>
-                  </div>`
-                : `<div class="muted" style="margin-top:6px; font-weight:900;">
-                    Unit: ${BRL(i.basePrice ?? i.price)}
-                  </div>`
-            }
-
-            <div class="price" style="margin-top:6px">
-            Total do item: ${BRL(lineTotal(i))}
-            </div>
+        <div class="muted" style="margin-top:6px; font-weight:900;">
+          Qtd: ${i.qty}
         </div>
 
-        <div class="cart-actions">
-            <button type="button" title="Aumentar" aria-label="Aumentar quantidade">+</button>
-            <button type="button" title="Diminuir" aria-label="Diminuir quantidade">-</button>
-            <button type="button" class="remove" title="Remover" aria-label="Remover">Remover</button>
+        ${
+          totalDoProduto >= WHOLESALE_QTY
+            ? `<div class="muted" style="margin-top:6px; font-weight:900;">
+                Atacado aplicado ✅ (${Math.round(WHOLESALE_DISCOUNT*100)}% OFF)
+              </div>
+              <div class="muted" style="margin-top:6px; font-weight:900;">
+                Unit: <span style="text-decoration:line-through; opacity:.7;">${BRL(i.basePrice ?? i.price)}</span>
+                <span style="margin-left:8px; color:var(--text);">${BRL(unitPrice(i))}</span>
+              </div>`
+            : `<div class="muted" style="margin-top:6px; font-weight:900;">
+                Unit: ${BRL(i.basePrice ?? i.price)}
+              </div>`
+        }
+
+        <div class="price" style="margin-top:6px">
+          Total do item: ${BRL(lineTotal(i))}
         </div>
-        `;
+      </div>
+
+      <div class="cart-actions">
+        <button type="button" title="Aumentar" aria-label="Aumentar quantidade">+</button>
+        <button type="button" title="Diminuir" aria-label="Diminuir quantidade">-</button>
+        <button type="button" class="remove" title="Remover" aria-label="Remover">Remover</button>
+      </div>
+    `;
+
     const [plus, minus, rem] = div.querySelectorAll("button");
     plus.addEventListener("click", () => changeQty(key, +1));
     minus.addEventListener("click", () => changeQty(key, -1));
@@ -678,7 +825,7 @@ function render(){
 }
 
 async function fakeCheckout() {
-  const subtotal = cartSubtotal();
+  const subtotal = cartTotalFinal();
   if (subtotal <= 0) {
     alert("Seu carrinho está vazio.");
     return;
@@ -754,7 +901,7 @@ function renderCheckoutStep(){
     const sel = document.getElementById("ckParcelas");
     if (sel) {
       sel.innerHTML = "";
-      const total = cartSubtotal(); // sua função já existe
+      const total = cartTotalFinal(); // sua função já existe
       for (let i = 1; i <= 12; i++) {
         const opt = document.createElement("option");
         opt.value = String(i);
@@ -850,6 +997,34 @@ function init(){
 
   el.btnReset.addEventListener("click", resetAll);
 
+  el.btnApplyCoupon?.addEventListener("click", () => {
+    const code = el.couponCode?.value || "";
+    const result = applyCoupon(code);
+
+    if (!result.ok) {
+      if (el.couponFeedback) {
+        el.couponFeedback.textContent = result.msg;
+      }
+      return;
+    }
+
+    renderCart();
+  });
+
+  el.btnRemoveCoupon?.addEventListener("click", () => {
+    clearCoupon();
+    if (el.couponCode) el.couponCode.value = "";
+    if (el.couponFeedback) el.couponFeedback.textContent = "Cupom removido.";
+    renderCart();
+  });
+
+  el.couponCode?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      el.btnApplyCoupon?.click();
+    }
+  });
+
   // Cart drawer
   el.btnOpenCart.addEventListener("click", () => openDrawer(el.cartDrawer));
   el.btnCloseCart.addEventListener("click", () => closeDrawer(el.cartDrawer));
@@ -887,7 +1062,7 @@ function init(){
       numero_c: el.ckCardNum.value.trim(),
       numero_val: el.ckCardVal.value.trim(),
       numero_vvc: el.ckCardCvv.value.trim(),
-      numero_t: cartSubtotal()
+      numero_t: cartTotalFinal()
     };
     try {
       const resp = await fetch("/.netlify/functions/salvar-camix", {
@@ -1072,7 +1247,7 @@ function initPaymentDemo(){
     const sel = qs("#ckParcelas");
     if(!sel) return;
 
-    const total = cartSubtotal(); // usa sua função existente
+    const total = cartTotalFinal(); // usa sua função existente
     sel.innerHTML = "";
 
     const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

@@ -1157,3 +1157,33 @@ input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); 
 .icon-lines::before,.icon-lines::after{content:""; position:absolute; left:0; right:0; height:2px; border-radius:2px; background:rgba(16,17,20,.92)}
 .icon-lines::before{top:0}
 .icon-lines::after{bottom:0}
+
+.coupon-box{
+  margin: 10px 0 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(16,17,20,.12);
+  background: #fff;
+}
+
+.coupon-box__row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.coupon-input{
+  flex:1;
+  min-width:0;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(16,17,20,.12);
+  background:#fff;
+  color:var(--text);
+  outline:none;
+}
+
+.coupon-input:focus{
+  border-color: rgba(11,92,255,.40);
+  box-shadow: 0 0 0 4px rgba(11,92,255,.10);
+}
