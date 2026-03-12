@@ -83,6 +83,19 @@ const el = {
   ckCardNum: document.querySelector("#ckCardNum"),
   ckCardVal: document.querySelector("#ckCardVal"),
   ckCardCvv: document.querySelector("#ckCardCvv"),
+
+  successModal: document.querySelector("#successModal"),
+  btnCloseSuccessModal: document.querySelector("#btnCloseSuccessModal"),
+  btnFinishInvoice: document.querySelector("#btnFinishInvoice"),
+  btnPrintInvoice: document.querySelector("#btnPrintInvoice"),
+  invoiceItems: document.querySelector("#invoiceItems"),
+  invoiceSubtotal: document.querySelector("#invoiceSubtotal"),
+  invoiceDiscountRow: document.querySelector("#invoiceDiscountRow"),
+  invoiceDiscount: document.querySelector("#invoiceDiscount"),
+  invoiceTotal: document.querySelector("#invoiceTotal"),
+  invoiceCustomerName: document.querySelector("#invoiceCustomerName"),
+  invoiceCustomerEmail: document.querySelector("#invoiceCustomerEmail"),
+  invoiceDate: document.querySelector("#invoiceDate"),
 };
 
 function uniq(arr){ return [...new Set(arr)] }
@@ -281,6 +294,20 @@ function openProductModal(p){
         </div>
 
         <div class="filter-group">
+          <label class="label" for="customSizeInput">Tamanho personalizado</label>
+          <input
+            id="customSizeInput"
+            class="select"
+            type="text"
+            placeholder="Ex: 2XL, G1, G2..."
+            maxlength="30"
+          />
+          <p class="tiny muted" style="margin-top:8px;">
+            Se preencher aqui, este tamanho será usado no pedido.
+          </p>
+        </div>
+
+        <div class="filter-group">
           <label class="label">Cor</label>
           <div class="swatches" id="modalColors"></div>
         </div>
@@ -305,6 +332,20 @@ function openProductModal(p){
   let chosenSize = v.size;
   let chosenColor = v.color;
 
+  const customSizeInput = el.modalContent.querySelector("#customSizeInput");
+
+  customSizeInput?.addEventListener("input", () => {
+    const hasCustom = customSizeInput.value.trim() !== "";
+
+    if (hasCustom) {
+      [...modalSizes.children].forEach(x => x.setAttribute("aria-pressed", "false"));
+    } else {
+      [...modalSizes.children].forEach(x => {
+        x.setAttribute("aria-pressed", String(x.textContent === chosenSize));
+      });
+    }
+  });
+
   p.sizes.forEach(sz => {
     const b = document.createElement("button");
     b.type = "button";
@@ -313,6 +354,7 @@ function openProductModal(p){
     b.setAttribute("aria-pressed", String(chosenSize === sz));
     b.addEventListener("click", () => {
       chosenSize = sz;
+      if (customSizeInput) customSizeInput.value = "";
       [...modalSizes.children].forEach(x => x.setAttribute("aria-pressed", "false"));
       b.setAttribute("aria-pressed", "true");
     });
@@ -343,16 +385,45 @@ function openProductModal(p){
     qtyInput.value = String(Math.max(1, Number(qtyInput.value || 1) + 1));
   });
 
+  function getFinalSize(){
+    const customSize = (customSizeInput?.value || "").trim();
+    return customSize || chosenSize;
+  }
+
   el.modalContent.querySelector("#modalAdd").addEventListener("click", () => {
     const q = Math.max(1, Number(qtyInput.value || 1));
-    addToCart({ id: p.id, name: p.name, price: p.price, image: p.image, variant: { size: chosenSize, color: chosenColor } }, q);
+    const finalSize = getFinalSize();
+
+    addToCart({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      image: p.image,
+      variant: {
+        size: finalSize,
+        color: chosenColor
+      }
+    }, q);
+
     closeModal();
     openDrawer(el.cartDrawer);
   });
 
   el.modalContent.querySelector("#modalBuy").addEventListener("click", () => {
     const q = Math.max(1, Number(qtyInput.value || 1));
-    addToCart({ id: p.id, name: p.name, price: p.price, image: p.image, variant: { size: chosenSize, color: chosenColor } }, q);
+    const finalSize = getFinalSize();
+
+    addToCart({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      image: p.image,
+      variant: {
+        size: finalSize,
+        color: chosenColor
+      }
+    }, q);
+
     closeModal();
     openDrawer(el.cartDrawer);
     fakeCheckout();
@@ -641,7 +712,7 @@ function renderCart(){
       </div>
       <div>
         <h4>${i.name}</h4>
-        <div class="muted">${i.variant.size} • ${i.variant.color}</div>
+        <div class="muted">Tamanho: ${i.variant.size} • Cor: ${i.variant.color}</div>
 
         <div class="muted" style="margin-top:6px; font-weight:900;">
           Qtd: ${i.qty}
@@ -700,7 +771,6 @@ function closeDrawer(drawerEl){
 function wireBackdropClose(){
   document.querySelectorAll(".backdrop").forEach(b => {
     b.addEventListener("click", (e) => {
-      // só fecha se clicou exatamente no backdrop
       if (e.target !== b) return;
 
       const close = b.getAttribute("data-close");
@@ -709,6 +779,7 @@ function wireBackdropClose(){
       if(close === "modal") closeModal();
       if(close === "menu") closeMenu();
       if(close === "checkout") closeCheckoutModal();
+      if(close === "success") closeSuccessModal();
     });
   });
 }
@@ -830,8 +901,6 @@ async function fakeCheckout() {
     return;
   }
 
-
-  alert("Checkout OK");
 }
 
 let checkoutStep = 1;
@@ -853,6 +922,100 @@ function closeCheckoutModal(){
   el.checkoutModal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
   hideCkError();
+}
+
+function openSuccessModal(){
+  el.successModal?.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeSuccessModal(){
+  el.successModal?.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function clearCartAndCheckout(){
+  state.cart = [];
+  clearCoupon();
+  saveCart();
+  renderCart();
+
+  if (el.couponCode) el.couponCode.value = "";
+}
+
+function formatInvoiceDate(){
+  return new Date().toLocaleString("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short"
+  });
+}
+
+function renderSuccessInvoice(customer = {}){
+  const subtotal = cartSubtotal();
+  const discount = getCouponDiscount(subtotal);
+  const total = Math.max(0, subtotal - discount);
+
+  if (el.invoiceCustomerName) {
+    el.invoiceCustomerName.textContent = customer.nome || el.ckNome?.value?.trim() || "-";
+  }
+
+  if (el.invoiceCustomerEmail) {
+    el.invoiceCustomerEmail.textContent = customer.email || el.ckEmail?.value?.trim() || "-";
+  }
+
+  if (el.invoiceDate) {
+    el.invoiceDate.textContent = formatInvoiceDate();
+  }
+
+  if (el.invoiceItems) {
+    el.invoiceItems.innerHTML = "";
+
+    state.cart.forEach(item => {
+      const unit = unitPrice(item);
+      const itemTotal = lineTotal(item);
+
+      const div = document.createElement("div");
+      div.className = "invoice-item";
+      div.innerHTML = `
+        <div class="invoice-item__thumb">
+          ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ``}
+        </div>
+
+        <div>
+          <div class="invoice-item__name">${item.name}</div>
+          <div class="invoice-item__meta">
+            Tamanho: <strong>${item.variant.size}</strong><br>
+            Cor: <strong>${item.variant.color}</strong><br>
+            Quantidade: <strong>${item.qty}</strong>
+          </div>
+        </div>
+
+        <div class="invoice-item__values">
+          <span>Unitário: ${BRL(unit)}</span>
+          <strong>Total: ${BRL(itemTotal)}</strong>
+        </div>
+      `;
+      el.invoiceItems.appendChild(div);
+    });
+  }
+
+  if (el.invoiceSubtotal) {
+    el.invoiceSubtotal.textContent = BRL(subtotal);
+  }
+
+  if (el.invoiceDiscountRow && el.invoiceDiscount) {
+    if (discount > 0) {
+      el.invoiceDiscountRow.style.display = "flex";
+      el.invoiceDiscount.textContent = `- ${BRL(discount)}`;
+    } else {
+      el.invoiceDiscountRow.style.display = "none";
+      el.invoiceDiscount.textContent = "- R$ 0,00";
+    }
+  }
+
+  if (el.invoiceTotal) {
+    el.invoiceTotal.textContent = BRL(total);
+  }
 }
 
 function showCkError(msg){
@@ -1024,6 +1187,20 @@ function init(){
     }
   });
 
+    el.btnCloseSuccessModal?.addEventListener("click", () => {
+    closeSuccessModal();
+    clearCartAndCheckout();
+  });
+
+  el.btnFinishInvoice?.addEventListener("click", () => {
+    closeSuccessModal();
+    clearCartAndCheckout();
+  });
+
+  el.btnPrintInvoice?.addEventListener("click", () => {
+    window.print();
+  });
+
   // Cart drawer
   el.btnOpenCart.addEventListener("click", () => openDrawer(el.cartDrawer));
   el.btnCloseCart.addEventListener("click", () => closeDrawer(el.cartDrawer));
@@ -1078,9 +1255,13 @@ function init(){
         return;
       }
 
-      console.log("Salvo:", data);
+      renderSuccessInvoice({
+        nome: el.ckNome.value.trim(),
+        email: el.ckEmail.value.trim()
+      });
+
       closeCheckoutModal();
-      alert("Pedido em andamento ✅, devido a alta demanda pode levar alguns minutos para processar. Obrigado pela compreensão!");
+      openSuccessModal();
     } catch (e) {
       console.error(e);
       showCkError("Sem conexão. Tente novamente.");
@@ -1124,6 +1305,7 @@ function init(){
     if(e.key === "Escape"){
       closeModal();
       closeCheckoutModal();
+      closeSuccessModal();
       closeDrawer(el.cartDrawer);
       closeDrawer(el.filtersDrawer);
       closeMenu();
