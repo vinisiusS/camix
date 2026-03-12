@@ -280,7 +280,7 @@ function openProductModal(p){
       <div class="modal-info">
         <div class="promo">${p.badge}</div>
         <h3>${p.name}</h3>
-        <p class="muted">${p.category} • Algodão premium • Caimento moderno</p>
+        <p class="muted">${p.category} • DRY FIT PREMIUM • Caimento moderno</p>
 
         <div class="kv">
           <span>${BRL(p.price)}</span>
