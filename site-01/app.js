@@ -455,7 +455,6 @@ function getCouponDiscount(subtotal){
 function cartTotalFinal(){
   const subtotal = cartSubtotal();
   const discount = getCouponDiscount(subtotal);
-  const total = cartTotalFinal();
   return Math.max(0, subtotal - discount);
 }
 function applyCoupon(code){
