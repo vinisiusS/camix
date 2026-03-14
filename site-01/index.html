@@ -66,6 +66,21 @@
     </div>
   </header>
 
+    <!-- Barra de urgência do cupom -->
+  <div class="coupon-timer-bar" id="couponTimerBar">
+    <div class="container coupon-timer-bar__inner">
+      <div class="coupon-timer-bar__left">
+        <strong>⚡ Cupom BECA10 ativo:</strong>
+        <span>ganhe 10% OFF no pedido</span>
+      </div>
+
+      <div class="coupon-timer-bar__right">
+        <span class="coupon-timer-bar__label">expira em</span>
+        <strong id="couponTimer">15:00</strong>
+      </div>
+    </div>
+  </div>
+
   <main id="inicio">
     <!-- Hero “camisa de time” -->
     <section class="hero">
@@ -338,6 +353,10 @@
         </div>
 
         <div class="coupon-box">
+          <div class="coupon-inline-timer" id="couponInlineTimer">
+            <span>⏰ Cupom <strong>BECA10</strong> expira em</span>
+            <strong id="couponTimerCart">15:00</strong>
+          </div>
           <label class="label" for="couponCode">Cupom</label>
           <div class="coupon-box__row">
             <input type="text" id="couponCode" class="coupon-input" placeholder="Digite seu cupom" />

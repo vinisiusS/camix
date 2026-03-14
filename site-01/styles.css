@@ -1459,3 +1459,100 @@ input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); 
     width:100%;
   }
 }
+
+/* ===== Timer do cupom ===== */
+.coupon-timer-bar{
+  position: sticky;
+  top: 73px;
+  z-index: 40;
+  background: linear-gradient(90deg, rgba(11,92,255,.10), rgba(16,185,129,.10));
+  border-bottom: 1px solid rgba(16,17,20,.10);
+  backdrop-filter: blur(8px);
+}
+
+.coupon-timer-bar__inner{
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.coupon-timer-bar__left{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.coupon-timer-bar__right{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(16,17,20,.10);
+  box-shadow: 0 10px 22px rgba(16,17,20,.06);
+}
+
+.coupon-timer-bar__label{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: .9rem;
+}
+
+#couponTimer,
+#couponTimerCart{
+  font-size: 1rem;
+  font-weight: 950;
+  color: var(--danger);
+  letter-spacing: .04em;
+}
+
+.coupon-inline-timer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background: rgba(239,68,68,.08);
+  border:1px solid rgba(239,68,68,.16);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.coupon-inline-timer.is-expired{
+  background: rgba(16,17,20,.05);
+  border-color: rgba(16,17,20,.10);
+}
+
+.coupon-timer-bar.is-expired{
+  background: rgba(16,17,20,.05);
+}
+
+@media (max-width: 640px){
+  .coupon-timer-bar{
+    top: 65px;
+  }
+
+  .coupon-timer-bar__inner{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .coupon-timer-bar__right{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .coupon-inline-timer{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -69,7 +69,7 @@ window.PRODUCTS = [
     id: "brasil-2-26-27.jpeg",
     name: "Brasil-2 2026/27",
     category: "BRASIL",
-    price: 139.9,
+    price: 149.9,
     colors: ["Azul"],
     sizes: ["P", "M", "G", "GG"],
     featured: false,
@@ -492,11 +492,11 @@ window.PRODUCTS = [
   {
     id: "bayer-munique-ede-125anos",
     name: "Bayer Munique EDE 125 anos",
-    category: "EUROPEU",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["Vermelho"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "EDE",
     image: "assets/bayer-munique-ede-125anos.jpg"
   },
@@ -525,7 +525,7 @@ window.PRODUCTS = [
   {
     id: "inter-milan-ede",
     name: "Inter Milan EDE",
-    category: "EUROPEU",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["Branco"],
     sizes: ["P", "M", "G", "GG"],
@@ -617,18 +617,18 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Vermelho"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/milan-25-26.jpg"
   },
   {
     id: "milan-ede-24-25",
     name: "Milan EDE 2024/25",
-    category: "EUROPEU",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["Preto"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "EDE",
     image: "assets/milan-ede-24-25.jpg"
   },
@@ -734,7 +734,7 @@ window.PRODUCTS = [
   {
     id: "corintians-ede-23-24",
     name: "Corintians EDE 2023/24",
-    category: "BRASILEIRÃO",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["off-white"],
     sizes: ["P", "M", "G", "GG"],
@@ -771,7 +771,7 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["off-white"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/flamengo-2-25-26.jpeg"
   },
@@ -789,11 +789,11 @@ window.PRODUCTS = [
   {
     id: "flamengo-ede-25-26",
     name: "Flamengo EDE 2025/26",
-    category: "BRASILEIRÃO",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["Preto"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "EDE",
     image: "assets/flamengo-ede-25-26.jpg"
   },
@@ -815,7 +815,7 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Vermelho"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/fluminense-25-26.jpg"
   },
@@ -870,7 +870,7 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Azul"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/gremio-25-26.jpg"
   },
@@ -892,19 +892,19 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Verde"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/palmeiras-25-26.jpg"
   },
   {
     id: "palmeiras-edicao-especial-25-26",
     name: "Palmeiras Edição Especial 2025/26",
-    category: "BRASILEIRÃO",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["Verde"],
     sizes: ["P", "M", "G", "GG"],
     featured: false,
-    badge: "ESPECIAL",
+    badge: "EDE",
     image: "assets/palmeiras-edicao-especial-25-26.jpeg"
   },
   {
@@ -932,11 +932,11 @@ window.PRODUCTS = [
   {
     id: "santos-ede-25-26",
     name: "Santos EDE 2025/26",
-    category: "BRASILEIRÃO",
+    category: "Edição Especial",
     price: 100.0,
     colors: ["preto"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "EDE",
     image: "assets/santos-ede-25-26.jpg"
   },
@@ -958,7 +958,7 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Preto"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/sao-paulo-25-26.jpg"
   },
@@ -969,7 +969,7 @@ window.PRODUCTS = [
     price: 100.0,
     colors: ["Preto"],
     sizes: ["P", "M", "G", "GG"],
-    featured: false,
+    featured: true,
     badge: "HOME",
     image: "assets/vasco-2-26-27.jpeg"
   },
@@ -995,4 +995,125 @@ window.PRODUCTS = [
     badge: "EDE",
     image: "assets/vasco-ede-25-26.jpeg"
   },
+  {
+    id: "astonVila-25-26",
+    name: "Aston Villa 2025/26",
+    category: "EUROPEU",
+    price: 100.0,
+    colors: ["Branco"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/astonVila-25-26.jpeg"
+  },
+  {
+    id: "borussiaDortmund-25-26",
+    name: "Borussia Dortmund 2025/26",
+    category: "EUROPEU",
+    price: 100.0,
+    colors: ["Amarela"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/borussiaDortmund-25-26.jpg"
+  },
+  {
+    id: "borussiaDortmund-all-black",
+    name: "Borussia Dortmund All Black",
+    category: "EUROPEU",
+    price: 100.0,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/borussiaDortmund-all-black.jpg"
+  },
+  {
+    id: "borussiaDortmund-ede-25-26",
+    name: "Borussia Dortmund EDE 2025/26",
+    category: "Edição Especial",
+    price: 100.0,
+    colors: ["Amarela"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "EDE",
+    image: "assets/borussiaDortmund-retro-25-26.jpeg"
+  },
+  {
+    id: "brasil-feminina-26-27",
+    name: "Brasil Feminina 2026/27",
+    category: "FEMININA",
+    price: 100.0,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/brasil-feminina-26-27.jpeg"
+  },
+  {
+    id: "brasil-feminina-26-27-2",
+    name: "Brasil Feminina 2026/27",
+    category: "FEMININA",
+    price: 100.0,
+    colors: ["Amarela"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "HOME",
+    image: "assets/brasil-feminina-26-27-2.jpg"
+  },
+  {
+    id: "brasil-retro-2002",
+    name: "Brasil Retrô 2002",
+    category: "BRASIL",
+    price: 100.0,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "RETRO",
+    image: "assets/brasil-retro-2002-2.jpg"
+  },
+  {
+    id: "brasil-retro-2004",
+    name: "Brasil Retrô 2004",
+    category: "BRASIL",
+    price: 100.0,
+    colors: ["Azul"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "RETRO",
+    image: "assets/brasil-retro-2004-2.jpeg"
+  },
+  {
+    id: "brasil-retro-2004-2",
+    name: "Brasil Retrô 2004",
+    category: "BRASIL",
+    price: 100.0,
+    colors: ["Amarelo"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "RETRO",
+    image: "assets/brasil-retro-2004.jpg"
+  },
+  {
+    id: "tottenham-25-26",
+    name: "Tottenham 2025/26",
+    category: "EUROPEU",
+    price: 100.0,
+    colors: ["Branco"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: true,
+    badge: "HOME",
+    image: "assets/tottenham-25-26.jpg"
+  },
+  {
+    id: "tottenham-2-25-26",
+    name: "Tottenham 2025/26",
+    category: "EUROPEU",
+    price: 100.0,
+    colors: ["Preto"],
+    sizes: ["P", "M", "G", "GG"],
+    featured: false,
+    badge: "HOME",
+    image: "assets/tottenham-2-25-26.jpg"
+  }
 ];

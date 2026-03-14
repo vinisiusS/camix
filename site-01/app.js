@@ -29,6 +29,11 @@ const el = {
   sortBy: document.querySelector("#sortBy"),
   btnReset: document.querySelector("#btnReset"),
 
+  couponTimerBar: document.querySelector("#couponTimerBar"),
+  couponTimer: document.querySelector("#couponTimer"),
+  couponTimerCart: document.querySelector("#couponTimerCart"),
+  couponInlineTimer: document.querySelector("#couponInlineTimer"),
+
   couponCode: document.querySelector("#couponCode"),
   btnApplyCoupon: document.querySelector("#btnApplyCoupon"),
   btnRemoveCoupon: document.querySelector("#btnRemoveCoupon"),
@@ -473,6 +478,85 @@ function clearCoupon(){
 
 function normalizeCouponCode(code){
   return String(code || "").trim().toUpperCase();
+}
+
+const COUPON_TIMER_KEY = "beca10_timer_end";
+const COUPON_TIMER_MINUTES = 15;
+
+function getCouponTimerEnd(){
+  const saved = localStorage.getItem(COUPON_TIMER_KEY);
+  const now = Date.now();
+
+  if (saved && Number(saved) > now) {
+    return Number(saved);
+  }
+
+  const newEnd = now + (COUPON_TIMER_MINUTES * 60 * 1000);
+  localStorage.setItem(COUPON_TIMER_KEY, String(newEnd));
+  return newEnd;
+}
+
+function resetCouponTimer(){
+  const newEnd = Date.now() + (COUPON_TIMER_MINUTES * 60 * 1000);
+  localStorage.setItem(COUPON_TIMER_KEY, String(newEnd));
+  updateCouponTimerUI(newEnd - Date.now());
+}
+
+function formatTimer(ms){
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function expireCouponTimer(){
+  if (el.couponTimer) el.couponTimer.textContent = "00:00";
+  if (el.couponTimerCart) el.couponTimerCart.textContent = "00:00";
+
+  if (el.couponTimerBar) el.couponTimerBar.classList.add("is-expired");
+  if (el.couponInlineTimer) el.couponInlineTimer.classList.add("is-expired");
+
+  if (el.couponInlineTimer) {
+    el.couponInlineTimer.innerHTML = `
+      <span>⏰ O cupom <strong>BECA10</strong> expirou.</span>
+      <strong>expirado</strong>
+    `;
+  }
+
+  if (el.couponFeedback && !state.appliedCoupon) {
+    el.couponFeedback.textContent = "O cupom BECA10 expirou.";
+  }
+}
+
+function updateCouponTimerUI(msLeft){
+  const text = formatTimer(msLeft);
+
+  if (el.couponTimer) el.couponTimer.textContent = text;
+  if (el.couponTimerCart) el.couponTimerCart.textContent = text;
+}
+
+function isCouponTimerExpired(){
+  const end = Number(localStorage.getItem(COUPON_TIMER_KEY) || 0);
+  return !end || Date.now() >= end;
+}
+
+function startCouponTimer(){
+  const end = getCouponTimerEnd();
+
+  updateCouponTimerUI(end - Date.now());
+
+  const interval = setInterval(() => {
+    const msLeft = end - Date.now();
+
+    if (msLeft <= 0) {
+      clearInterval(interval);
+      expireCouponTimer();
+      return;
+    }
+
+    updateCouponTimerUI(msLeft);
+  }, 1000);
 }
 
 /*
@@ -1312,6 +1396,7 @@ function init(){
     }
   });
   initPaymentDemo();
+  startCouponTimer();
   render();
 }
 
