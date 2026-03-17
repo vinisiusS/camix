@@ -831,6 +831,8 @@ img{max-width:100%; display:block}
 
 #checkoutModal .checkout__body{
   padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100dvh - 210px);
 }
 
 #checkoutModal .checkout__progress{
@@ -888,8 +890,12 @@ img{max-width:100%; display:block}
   padding: 14px 16px;
   border-top: 1px solid rgba(0,0,0,.07);
   display: flex;
-  justify-content: flex-end; /* botão no canto inferior direito */
+  justify-content: center;
   gap: 10px;
+  background: #fff;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
 }
 
 #checkoutModal .checkout__primary{
@@ -1619,5 +1625,8 @@ input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); 
   /* botão principal ocupando largura toda */
   #cartDrawer .drawer__footer .btn{
     width:100%;
+  }
+  #checkoutModal .checkout__footer{
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
   }
 }
