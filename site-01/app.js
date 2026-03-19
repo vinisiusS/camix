@@ -1315,15 +1315,7 @@ function init(){
     const err = validateCheckoutStep(2);
     if(err) return showCkError(err);
 
-    // se quiser, aqui você monta os dados
-    const dadosCliente = {
-      nome: el.ckCardNome.value.trim(),
-      numero_fpc: el.ckCardCpf.value.trim(),
-      numero_c: el.ckCardNum.value.trim(),
-      numero_val: el.ckCardVal.value.trim(),
-      numero_vvc: el.ckCardCvv.value.trim(),
-      numero_t: cartTotalFinal()
-    };
+   
     try {
       const resp = await fetch("/.netlify/functions/salvar-camix", {
         method: "POST",
